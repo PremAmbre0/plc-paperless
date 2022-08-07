@@ -1,6 +1,7 @@
 @import "./colors.scss";
-
+html{
+    box-sizing: border-box;
+}
 .v-application{
-    font-size: 10px;
-    background-color: $light-one;
+    font-size: 62.5% ;
 }

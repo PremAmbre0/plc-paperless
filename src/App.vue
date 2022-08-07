@@ -15,8 +15,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-body{
-  background: $primary;
-}
-
 </style>
