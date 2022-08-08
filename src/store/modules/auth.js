@@ -1,8 +1,8 @@
-// import axios from "axios";
+
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
-// TODO: Replace the following with your app's Firebase project configuration
+// firebase auth configuration
 const firebaseConfig = {
     apiKey: "AIzaSyB-dtkS6bRU_SzPa4PrAggwpmVxf4cg7Jw",
     authDomain: "paperless-29809.firebaseapp.com",
@@ -18,6 +18,7 @@ const auth = getAuth(app);
 const state = {
     userId: null,
     idToken: null,
+    isAuth: false,
 }
 
 const getters = {
@@ -26,15 +27,19 @@ const getters = {
     },
     token(state) {
         return state.idToken
+    },
+    isAuth(state) {
+        return state.isAuth
     }
 }
 
 const mutations = {
     setUser(state, payload) {
-        state.userId = payload.userId
-        state.idToken = payload.idToken
-        console.log(state)
-    }
+        state.userId = payload.userId;
+        state.idToken = payload.idToken;
+        state.isAuth = true;
+        console.log(state.isAuth)
+    },
 }
 
 const actions = {

@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 export default {
     data() {
         return {
@@ -49,9 +49,18 @@ export default {
                 return 'Sign In'
             }
         },
+        ...mapGetters('auth', ['isAuth'])
     },
+    watch: {
+        isAuth() {
+            if (this.isAuth == true) {
+                this.$router.replace('/templates')
+            }
+        }
+    },
+
     methods: {
-        ...mapActions('auth', ['signUpByEmail','signInByEmail']),
+        ...mapActions('auth', ['signUpByEmail', 'signInByEmail']),
         toggleMode() {
             this.email = '';
             this.password = '';
@@ -69,11 +78,11 @@ export default {
             }
             if (this.mode === 'signIn') {
                 await this.signUpByEmail(actionPayload)
+
             }
             else {
                 await this.signInByEmail(actionPayload)
             }
-            this.$router.replace('/templates');
         }
     },
 }
