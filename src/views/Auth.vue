@@ -51,7 +51,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions('auth', ['signIn', 'logIn']),
+        ...mapActions('auth', ['signUpByEmail','signInByEmail']),
         toggleMode() {
             this.email = '';
             this.password = '';
@@ -67,13 +67,13 @@ export default {
                 email: this.email,
                 password: this.password
             }
-            if (this.mode === 'logIn') {
-                await this.logIn(actionPayload)
+            if (this.mode === 'signIn') {
+                await this.signUpByEmail(actionPayload)
             }
             else {
-                await this.signIn(actionPayload)
+                await this.signInByEmail(actionPayload)
             }
-            // this.$router.replace('/coaches');
+            this.$router.replace('/templates');
         }
     },
 }
