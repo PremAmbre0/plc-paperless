@@ -27,7 +27,7 @@ const actions = {
         const mode = payload.mode // decides weather to post or get the data from the server
         let responseData = null //will store response from the api call
         let url = null 
-        if (mode == "signIn") {
+        if (mode == 'signIn') {
             // for new user 
             url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyB-dtkS6bRU_SzPa4PrAggwpmVxf4cg7Jw"
         }
@@ -37,21 +37,19 @@ const actions = {
         }
         // api call
         const response = await axios.post(url, {
-            body: JSON.stringify({
-                email: payload.email,
-                password: payload.password,
+            data: JSON.stringify({
+                email: [payload.email],
+                password: [payload.password],
                 returnSecureToken: true
             })
         })
-        // checking for error
-        if (!response.ok) {
-            const error = responseData.error || 'Failed to Authenticate'
-            throw error;
-        }
+        console.log(response.data)
         // storing data 
-        responseData = await response.json()
+        responseData = await response.data
         localStorage.setItem('token', responseData.idToken)
         localStorage.setItem('userId', responseData.localId)
+        // logging response data
+        console.log(responseData)
         // commiting the mutation 
         context.commit('setUser', {
             token: responseData.idToken,
@@ -61,17 +59,17 @@ const actions = {
     // dispatching the actions for Email Auth
     async logIn(context, payload) {
         // for existing user
-        return context.dispatch('auth', {
+        return context.dispatch('authByEmail', {
             ...payload,
-            mode: 'signIn'
+            mode: 'LogIn'
         })
     },
 
-    async signUp(context, payload) {
+    async signIn(context, payload) {
         // for new user
-        return context.dispatch('auth', {
+        return context.dispatch('authByEmail', {
             ...payload,
-            mode: 'signUp'
+            mode: 'signIn'
         })
     }
 

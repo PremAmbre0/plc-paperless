@@ -6,14 +6,15 @@
                 <span class="header-text">Welcome</span>
             </div>
             <v-form class="auth-form">
-                <v-text-field outlined v-model="email" type='text' label="Email Address"
+                <v-text-field outlined clearable v-model="email" type='text' label="Email Address"
                     hint="Enetr a valid email address" :rules="[rules.required]"></v-text-field>
-                <v-text-field v-model="password" outlined :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                <v-text-field v-model="password" outlined clearable :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                     :rules="[rules.required, rules.min]" :type="show ? 'text' : 'password'" name="input-10-1"
                     label="Pasword" hint="At least 8 characters" counter @click:append="show = !show">
                 </v-text-field>
                 <div class="auth-text">Forgot password?</div>
-                <v-btn color="#5243AA" elevation="11" dark large width=100%>Continue</v-btn>
+                <v-btn color="#5243AA" elevation="11" dark large width=100% @click="submit">{{ submitButtomCaption }}
+                </v-btn>
             </v-form>
             <div class="auth-text" @click="toggleMode">{{ hintText }}</div>
         </div>
@@ -21,6 +22,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
     data() {
         return {
@@ -28,6 +30,7 @@ export default {
             mode: 'signIn',
             email: '',
             password: '',
+            error: '',
             rules: {
                 required: value => !!value || 'Required.',
                 min: v => v.length >= 8 || 'Min 8 characters',
@@ -38,18 +41,39 @@ export default {
         hintText() {
             if (this.mode == 'signIn') return "Already Have an Account? Log in"
             else return "Don't have an Account? Sign in"
-        }
+        },
+        submitButtomCaption() {
+            if (this.mode === 'logIn') {
+                return 'Log In'
+            } else {
+                return 'Sign In'
+            }
+        },
     },
     methods: {
+        ...mapActions('auth', ['signIn', 'logIn']),
         toggleMode() {
             this.email = '';
             this.password = '';
             if (this.mode == 'signIn') {
-                this.mode = 'LogIn';
+                this.mode = 'logIn';
             }
             else {
                 this.mode = 'signIn';
             }
+        },
+        async submit() {
+            const actionPayload = {
+                email: this.email,
+                password: this.password
+            }
+            if (this.mode === 'logIn') {
+                await this.logIn(actionPayload)
+            }
+            else {
+                await this.signIn(actionPayload)
+            }
+            // this.$router.replace('/coaches');
         }
     },
 }
