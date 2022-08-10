@@ -61,8 +61,8 @@ export default {
     methods: {
         ...mapActions('auth', ['signUpByEmail', 'signInByEmail']),
         toggleMode() {
-            this.email = '';
-            this.password = '';
+            // this.email = '';
+            // this.password = '';
             if (this.mode == 'signIn') {
                 this.mode = 'logIn';
             }

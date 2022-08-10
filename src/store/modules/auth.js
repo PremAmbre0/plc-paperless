@@ -1,6 +1,6 @@
 
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword , signOut} from 'firebase/auth';
 
 // firebase auth configuration
 const firebaseConfig = {
@@ -38,8 +38,8 @@ const mutations = {
         state.userId = payload.userId;
         state.idToken = payload.idToken;
         state.isAuth = true;
-        console.log(state.isAuth)
-    },
+        localStorage.setItem('isAuth', true);
+    }
 }
 
 const actions = {
@@ -49,6 +49,9 @@ const actions = {
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
+                // storing the credentials in localStorage
+                localStorage.setItem('userId', user.uid)
+                localStorage.setItem('idToken', user.accessToken)
                 // commmiting the setUser to update state
                 context.commit('setUser', {
                     userId: user.uid,
@@ -69,6 +72,9 @@ const actions = {
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
+                // storing the credentials in localStorage
+                localStorage.setItem('userId', user.uid)
+                localStorage.setItem('idToken', user.accessToken)
                 // commmiting the setUser to update state
                 context.commit('setUser', {
                     userId: user.uid,
@@ -81,6 +87,14 @@ const actions = {
                 // ..
                 console.log(errorCode, errorMessage)
             });
+    },
+    signOut(){
+        signOut(auth).then(() => {
+            // Sign-out successful.
+        }).catch((error) => {
+            // An error happened.
+            console.log(error)
+        });
     }
 }
 

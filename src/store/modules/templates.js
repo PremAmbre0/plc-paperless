@@ -39,7 +39,7 @@ const state = {
 }
 
 const getters = {
-    tenplates(state) {
+    templates(state) {
         return state.templates
     }
 

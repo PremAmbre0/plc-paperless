@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-app-bar color="#5243AA" dark height="60%">
+        <v-app-bar app color="#5243AA" dark height="60%" width="100%">
 
             <v-toolbar-title>Paperless</v-toolbar-title>
 
@@ -11,7 +11,7 @@
             </v-btn>
 
             <v-btn icon>
-                <v-icon>mdi-logout</v-icon>
+                <v-icon @click="signOutFromPaperless">mdi-logout</v-icon>
             </v-btn>
 
             <v-btn icon>
@@ -20,3 +20,18 @@
         </v-app-bar>
     </div>
 </template>
+
+
+<script>
+import { mapActions } from "vuex";
+export default {
+    methods: {
+        ...mapActions('auth', ['signOut']),
+        signOutFromPaperless(){
+            this.signOut()
+            this.$router.replace('/auth')
+        }
+    }
+}
+
+</script>
