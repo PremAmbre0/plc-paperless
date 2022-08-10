@@ -5,6 +5,7 @@ import Templates from "../views/Templates.vue";
 import Datasets from "../views/Datasets.vue";
 import Dashboard from "../views/Dashboard.vue";
 import Jobs from "../views/Jobs.vue";
+import Test from "../views/Test.vue";
 
 
 Vue.use(VueRouter);
