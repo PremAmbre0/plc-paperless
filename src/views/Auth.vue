@@ -3,7 +3,6 @@
         <div class="auth">
             <div class="header">
                 <span class="header-logo">Paperless</span>
-                <span class="header-text">Welcome</span>
             </div>
             <v-form class="auth-form">
                 <v-text-field outlined clearable v-model="email" type='text' label="Email Address"

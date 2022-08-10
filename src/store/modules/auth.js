@@ -18,7 +18,7 @@ const auth = getAuth(app);
 const state = {
     userId: null,
     idToken: null,
-    isAuth: false,
+    isAuth: null,
 }
 
 const getters = {
