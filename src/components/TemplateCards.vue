@@ -1,9 +1,9 @@
 <template>
-    <v-card class="mx-auto" max-width="344" outlined>
-        <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"></v-img>
-        <v-card-actions>
+    <v-card class="mx-auto" width="100%" outlined elevation="4">
+        <v-img :src="imageUrl" height="200px"></v-img>
+        <v-card-actions> 
             <v-card-title>
-                Top western road trips
+                {{name}}
             </v-card-title>
             <v-spacer></v-spacer>
             <v-expand-transition>
@@ -41,6 +41,19 @@ export default {
         ],
 
     }),
+    props:{
+        name:{
+            type:String,
+            required:true
+        },
+        imageUrl:{
+            type:String,
+            required:true
+        }
+    },
+    mounted(){
+        console.log(this.imageUrl);
+    }
 }
 </script>
 
