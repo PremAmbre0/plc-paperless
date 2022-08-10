@@ -18,9 +18,9 @@
                             </template>
                         </v-tooltip>
                     </template>
-                    <v-list>
+                    <v-list rounded dense>
                         <v-list-item v-for="(item, index) in items" :key="index">
-                            <v-list-item-title>{{ item.title }}</v-list-item-title>
+                            <v-list-item-title>{{ item.option }}</v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>
@@ -34,10 +34,10 @@
 export default {
     data: () => ({
         items: [
-            { title: 'Click Me1' },
-            { title: 'Click Me2' },
-            { title: 'Click Me3' },
-            { title: 'Click Me4' },
+            { option: 'Preview' },
+            { option: 'Edit Template' },
+            { option: 'Open in Builder' },
+            { option: 'Download' },
         ],
 
     }),
