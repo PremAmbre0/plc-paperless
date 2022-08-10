@@ -1,7 +1,14 @@
 <template>
-    <div class="template-container ">
-        <template-cards v-for="template in templates" :key="template.createdOn" :name="template.name"
-            :imageUrl="template.imageUrl"></template-cards>
+    <div>
+        <div class="template-container ">
+            <template-cards v-for="template in templates" :key="template.createdOn" :name="template.name"
+                :imageUrl="template.imageUrl"></template-cards>
+        </div>
+        <v-btn class="add-temp" fab dark color="indigo">
+            <v-icon dark>
+                mdi-plus
+            </v-icon>
+        </v-btn>
     </div>
 </template>
 
@@ -21,6 +28,7 @@ export default {
 
 <style lang="scss" scoped>
 .template-container {
+    margin-top: 3rem;
     width: 80vw;
     display: grid;
     grid-column-gap: 1rem;
@@ -33,6 +41,19 @@ export default {
     // margin: 0 auto;
     // margin-top: 10vh;
 
+}
+
+.add-temp {
+    position: fixed;
+    right: 5%;
+    bottom:3%
+}
+
+@media(max-width:500px) {
+    .template-container {
+        grid-row-gap: 2rem;
+        grid-template-columns: 1fr;
+    }
 }
 
 @media(min-width:750px) {
