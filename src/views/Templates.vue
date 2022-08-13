@@ -13,24 +13,34 @@
 </template>
 
 <script>
+import { mapActions , mapMutations} from 'vuex';
 import TemplateCards from "../components/TemplateCards.vue";
 export default {
     data() {
         return {
-            templatesList:[
-                { "_id": "62f6f8abbb1f9d06adf25962", "userId": "auth0|62dbaf48eaaaba65e88b1b86", "name": "test1", "imageUrl": "https://i.imgur.com/Z2hZFlJ.png", "createdOn": "2022-08-13T01:04:43.155Z", "updatedOn": "2022-08-13T01:04:43.155Z", "__v": 0 },
-                { "_id": "62f6f8abbb1f9d06adf25962", "userId": "auth0|62dbaf48eaaaba65e88b1b86", "name": "test1", "imageUrl": "https://i.imgur.com/Z2hZFlJ.png", "createdOn": "2022-08-13T01:04:44.155Z", "updatedOn": "2022-08-13T01:04:43.155Z", "__v": 0 },
-                { "_id": "62f6f8abbb1f9d06adf25962", "userId": "auth0|62dbaf48eaaaba65e88b1b86", "name": "test1", "imageUrl": "https://i.imgur.com/Z2hZFlJ.png", "createdOn": "2022-08-13T01:04:45.155Z", "updatedOn": "2022-08-13T01:04:43.155Z", "__v": 0 },
-                { "_id": "62f6f8abbb1f9d06adf25962", "userId": "auth0|62dbaf48eaaaba65e88b1b86", "name": "test1", "imageUrl": "https://i.imgur.com/Z2hZFlJ.png", "createdOn": "2022-08-13T01:04:46.155Z", "updatedOn": "2022-08-13T01:04:43.155Z", "__v": 0 },
-                { "_id": "62f6f8abbb1f9d06adf25962", "userId": "auth0|62dbaf48eaaaba65e88b1b86", "name": "test1", "imageUrl": "https://i.imgur.com/Z2hZFlJ.png", "createdOn": "2022-08-13T01:04:47.155Z", "updatedOn": "2022-08-13T01:04:43.155Z", "__v": 0 },
-                ],
+            templatesList:[],
         }
     },
-    // mounted() {
-    //     console.log(typeof(this.templatesList))
-    // },
+    async created(){
+        this.getData();
+    }, 
     components: {
         TemplateCards
+    },
+    methods: {
+        ...mapActions('templates',['getTemplatesList']),
+        ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
+        getData() {
+			this.openLoaderDialog();
+			this.getTemplatesList({
+				pageSize: 100,
+				pageNo: 1,
+			}).then((data) => {
+                this.templatesList = data.list
+				this.closeLoaderDialog();
+			});
+		},
+        
     },
 }
 
