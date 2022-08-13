@@ -1,7 +1,7 @@
 <template>
-    <v-card class="mx-auto" width="100%" outlined elevation="4">
-        <v-img :src="imageUrl" height="200px"></v-img>
-        <v-card-actions> 
+    <v-card class="mx-auto"  outlined elevation="4">
+        <v-img :src="imageUrl" height="180px"></v-img>
+        <v-card-actions>  
             <v-card-title>
                 {{name}}
             </v-card-title>
@@ -51,9 +51,6 @@ export default {
             required:true
         }
     },
-    mounted(){
-        console.log(this.imageUrl);
-    }
 }
 </script>
 
