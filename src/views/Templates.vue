@@ -1,10 +1,11 @@
 <template>
     <div>
-        <div class="template-container ">
+        <div class="template-container">
             <template-cards v-for="template in templatesList" :key="template.createdOn" :name="template.name"
-                :imageUrl="template.imageUrl"/>
+                :imageUrl="template.imageUrl" @click.native="openDialogForm() ; setSelectedTemplate(template);" />
         </div>
-        <v-btn class="add-temp" fab dark color="indigo">
+        <dialog-form :templateName="selectedTemplate.templateName" :imageUrl="selectedTemplate.imageUrl"></dialog-form>
+        <v-btn class="add-temp" fab dark color="indigo" @click="openDialogForm(); removeselectedTemplate()">
             <v-icon dark>
                 mdi-plus
             </v-icon>
@@ -13,41 +14,54 @@
 </template>
 
 <script>
-import { mapActions , mapMutations} from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 import TemplateCards from "../components/TemplateCards.vue";
+import DialogForm from "../components/DialogForm/DialogForm.vue"
 export default {
     data() {
         return {
-            templatesList:[],
+            selectedTemplate: {
+                templateName: '',
+                imageUrl: ''
+            },
+            mode:'',
+            templatesList: [],
         }
     },
-    async created(){
-        this.getData();
-    }, 
     components: {
-        TemplateCards
+        TemplateCards,
+        DialogForm
+    },
+    async created() {
+        this.getData();
     },
     methods: {
-        ...mapActions('templates',['getTemplatesList']),
-        ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
+        ...mapActions('templates', ['getTemplatesList']),
+        ...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openDialogForm"]),
         getData() {
-			this.openLoaderDialog();
-			this.getTemplatesList({
-				pageSize: 100,
-				pageNo: 1,
-			}).then((data) => {
+            this.openLoaderDialog();
+            this.getTemplatesList({
+                pageSize: 100,
+                pageNo: 1,
+            }).then((data) => {
                 this.templatesList = data.list
-				this.closeLoaderDialog();
-			});
-		},
-        
+                this.closeLoaderDialog();
+            });
+        },
+        setSelectedTemplate(template) {
+            this.selectedTemplate.templateName = template.name;
+            this.selectedTemplate.imageUrl = template.imageUrl;
+        },
+        removeselectedTemplate(){
+            this.selectedTemplate.templateName = '';
+            this.selectedTemplate.imageUrl = '';
+        }
     },
 }
 
 </script>
 
 <style lang="scss" scoped>
-
 .template-container {
     max-width: 80vw;
     margin: 0 auto;

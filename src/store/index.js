@@ -16,6 +16,7 @@ const initialState = () => ({
     failure: "",
   },
   uploadPercentage: 0,
+  showDialogForm: false,
 });
 
 let apiErrorFunction = ({ err, commit, reject }) => {
@@ -84,6 +85,12 @@ export default new Vuex.Store({
 
     loginFail: (state, p) => {
       state.messages.loginFailed = p;
+    },
+    openDialogForm(state) {
+      state.showDialogForm = true;
+    },
+    closeDialogForm(state) {
+      state.showDialogForm = false;
     },
     // logoutFail: (state, p) => {
     //   console.log("logged out");
@@ -154,7 +161,7 @@ export default new Vuex.Store({
           });
       });
     },
-    apiCall({ commit}, partConfig) {
+    apiCall({ commit }, partConfig) {
       return new Promise((resolve, reject) => {
         this._vm.$auth
           .getTokenSilently()
@@ -218,8 +225,9 @@ export default new Vuex.Store({
     snackbarTime: (state) => state.snackbarTime,
     uploadPercentage: (state) => state.uploadPercentage,
     currentState: (state) => state.currentState,
+    showDialogForm: (state) => state.showDialogForm
   },
-  modules:{
+  modules: {
     templates,
     datasets
   }
