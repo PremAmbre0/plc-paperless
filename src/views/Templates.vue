@@ -2,10 +2,10 @@
     <div>
         <div class="template-container">
             <template-cards v-for="template in templatesList" :key="template.createdOn" :name="template.name"
-                :imageUrl="template.imageUrl" @click.native="openDialogForm() ; setSelectedTemplate(template);" />
+                :imageUrl="template.imageUrl" :id="template._id" @click.native=" setSelectedTemplate(template);" @deleteTemp="deleteTemp"/>
         </div>
-        <dialog-form :templateName="selectedTemplate.templateName" :imageUrl="selectedTemplate.imageUrl"></dialog-form>
-        <v-btn class="add-temp" fab dark color="indigo" @click="openDialogForm(); removeselectedTemplate()">
+        <dialog-form :templateName="selectedTemplate.templateName" :imageUrl="selectedTemplate.imageUrl" :mode="mode" :id="selectedTemplate.id"></dialog-form>
+        <v-btn class="add-temp" fab dark color="indigo" @click="removeselectedTemplate()">
             <v-icon dark>
                 mdi-plus
             </v-icon>
@@ -16,13 +16,14 @@
 <script>
 import { mapActions, mapMutations } from 'vuex';
 import TemplateCards from "../components/TemplateCards.vue";
-import DialogForm from "../components/DialogForm/DialogForm.vue"
+import DialogForm from "../components/DialogForm.vue"
 export default {
     data() {
         return {
             selectedTemplate: {
                 templateName: '',
-                imageUrl: ''
+                imageUrl: '',
+                id:''
             },
             mode:'',
             templatesList: [],
@@ -36,7 +37,7 @@ export default {
         this.getData();
     },
     methods: {
-        ...mapActions('templates', ['getTemplatesList']),
+        ...mapActions('templates', ['getTemplatesList','deleteTemplate']),
         ...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openDialogForm"]),
         getData() {
             this.openLoaderDialog();
@@ -51,11 +52,26 @@ export default {
         setSelectedTemplate(template) {
             this.selectedTemplate.templateName = template.name;
             this.selectedTemplate.imageUrl = template.imageUrl;
+            this.selectedTemplate.id = template._id;
+            this.mode = 'edit'
+            this.openDialogForm()
         },
         removeselectedTemplate(){
             this.selectedTemplate.templateName = '';
             this.selectedTemplate.imageUrl = '';
-        }
+            this.selectedTemplate.id = '';
+            this.mode = 'new'
+            this.openDialogForm()
+        },
+        deleteTemp(id){
+            if(window.confirm("Are you sure you want to deleteTemplate?")){
+                this.deleteTemplate({
+                    id: id,
+                })
+                this.getData()
+            }
+        },
+
     },
 }
 

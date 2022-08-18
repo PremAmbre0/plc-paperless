@@ -20,7 +20,7 @@
                     </template>
                     <v-list rounded dense>
                         <v-list-item v-for="(item, index) in items" :key="index">
-                            <v-list-item-title>{{ item.option }}</v-list-item-title>
+                            <v-list-item-title @click="eventHandler(item.option)">{{ item.option }}</v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>
@@ -36,6 +36,7 @@ export default {
         items: [
             { option: 'Preview' },
             { option: 'Edit Template' },
+            { option: 'Delete' },
             { option: 'Open in Builder' },
             { option: 'Download' },
         ],
@@ -49,8 +50,19 @@ export default {
         imageUrl:{
             type:String,
             required:true
+        },
+        id:{
+            type:String,
+            required:true
         }
     },
+    methods:{
+        eventHandler(option){
+        if(option=='Delete'){
+            this.$emit('deleteTemp',this.id)
+        }
+    }
+    }
 }
 </script>
 
