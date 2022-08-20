@@ -2,19 +2,24 @@
     <div>
         <div class="template-container">
             <template-cards v-for="template in templatesList" :key="template.createdOn" :name="template.name"
-                :imageUrl="template.imageUrl" :id="template._id" @click.native=" setSelectedTemplate(template);" @deleteTemp="deleteTemp"/>
+                :imageUrl="template.imageUrl" :id="template._id" @click.native="setSelectedTemplate(template);"
+                @deleteTemp="deleteTemp" />
         </div>
-        <dialog-form :templateName="selectedTemplate.templateName" :imageUrl="selectedTemplate.imageUrl" :mode="mode" :id="selectedTemplate.id"></dialog-form>
+        <dialog-form :templateName="selectedTemplate.templateName" :imageUrl="selectedTemplate.imageUrl" :mode="mode"
+            :id="selectedTemplate.id"></dialog-form>
         <v-btn class="add-temp" fab dark color="indigo" @click="removeselectedTemplate()">
             <v-icon dark>
                 mdi-plus
             </v-icon>
         </v-btn>
+        <v-overlay :value="showOverlayLoader" color="#5243AA">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import TemplateCards from "../components/TemplateCards.vue";
 import DialogForm from "../components/DialogForm.vue"
 export default {
@@ -23,11 +28,14 @@ export default {
             selectedTemplate: {
                 templateName: '',
                 imageUrl: '',
-                id:''
+                id: ''
             },
-            mode:'',
+            mode: '',
             templatesList: [],
         }
+    },
+    computed: {
+        ...mapGetters(['showOverlayLoader']),
     },
     components: {
         TemplateCards,
@@ -37,16 +45,14 @@ export default {
         this.getData();
     },
     methods: {
-        ...mapActions('templates', ['getTemplatesList','deleteTemplate']),
-        ...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openDialogForm"]),
+        ...mapActions('templates', ['getTemplatesList', 'deleteTemplate']),
+        ...mapMutations(["openDialogForm","openOverlayLoader","closeOverlayLoader"]),
         getData() {
-            this.openLoaderDialog();
             this.getTemplatesList({
                 pageSize: 100,
                 pageNo: 1,
             }).then((data) => {
                 this.templatesList = data.list
-                this.closeLoaderDialog();
             });
         },
         setSelectedTemplate(template) {
@@ -56,19 +62,22 @@ export default {
             this.mode = 'edit'
             this.openDialogForm()
         },
-        removeselectedTemplate(){
+        removeselectedTemplate() {
             this.selectedTemplate.templateName = '';
             this.selectedTemplate.imageUrl = '';
             this.selectedTemplate.id = '';
             this.mode = 'new'
             this.openDialogForm()
         },
-        deleteTemp(id){
-            if(window.confirm("Are you sure you want to deleteTemplate?")){
+        deleteTemp(id) {
+            if (window.confirm("Are you sure you want to deleteTemplate?")) {
+                this.openOverlayLoader()
                 this.deleteTemplate({
                     id: id,
+                }).then(() => {
+                    this.getData()
+                    this.closeOverlayLoader()
                 })
-                this.getData()
             }
         },
 

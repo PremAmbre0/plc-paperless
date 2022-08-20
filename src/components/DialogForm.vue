@@ -9,7 +9,7 @@
                         </v-text-field>
                         <v-icon>mdi-close</v-icon>
                         <div for="file-input" class="imagePreviewWrapper"
-                            :style="{ 'background-image': `url(${previewImage})` }">
+                            :style="{ 'background-image': `url(${previewImage ? previewImage : '../assets/greybg.png'})` }">
                             <input ref="fileInput" type="file" accept="image/*" id="file-input" @dragover.prevent
                                 @drop.prevent @input="pickFile">
                         </div>
@@ -49,12 +49,10 @@ export default {
             }
         }
     },
-    updated() {
-        console.log(this.id)
-    },
     methods: {
-        ...mapMutations(['closeDialogForm']),
+        ...mapMutations(['closeDialogForm','openOverlayLoader','closeOverlayLoader']),
         ...mapActions('templates', ['addTemplate', 'editTemplate']),
+        
         setInitialFormData() {
             if (this.templateName) {
                 this.tempName = this.templateName;
@@ -97,17 +95,24 @@ export default {
                 data.append('file', this.file);
                 data.append('filename', this.file.name);
                 data.append('name', name);
+                this.openOverlayLoader();
+                this.closeDialogForm();
                 this.addTemplate(data).then((response) => {
                     console.log(response)
+                }).then(()=>{
+                    this.closeOverlayLoader()
                 })
             } else if (this.mode == 'edit') {
                 data.append('file', this.file);
                 data.append('name', name);
+                this.openOverlayLoader();
+                this.closeDialogForm();
                 this.editTemplate({
                     form : data,
                     id :this.tempID
                 }).then((response) => {
                     console.log(response)
+                    this.closeOverlayLoader();
                 })
             }
         }
@@ -136,14 +141,14 @@ export default {
 
 .imagePreviewWrapper {
     display: block;
-    background-color: lightgrey;
     max-width: 50vw;
     min-height: 20rem;
     display: block;
     cursor: pointer;
     margin: 0 auto 30px;
-    background-size: contain;
+    background-size:cover;
     background-position: center center;
+    background-repeat: no-repeat;
 }
 
 input[type="file"] {

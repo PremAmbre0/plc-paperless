@@ -17,6 +17,7 @@ const initialState = () => ({
   },
   uploadPercentage: 0,
   showDialogForm: false,
+  showOverlayLoader: false
 });
 
 let apiErrorFunction = ({ err, commit, reject }) => {
@@ -95,6 +96,12 @@ export default new Vuex.Store({
     // logoutFail: (state, p) => {
     //   console.log("logged out");
     // },
+    openOverlayLoader(state){
+      state.showOverlayLoader = true;
+    },
+    closeOverlayLoader(state){
+      state.showOverlayLoader = false;
+    },
     resetState(state) {
       const initial = initialState();
       Object.keys(initial).forEach((key) => {
@@ -225,7 +232,8 @@ export default new Vuex.Store({
     snackbarTime: (state) => state.snackbarTime,
     uploadPercentage: (state) => state.uploadPercentage,
     currentState: (state) => state.currentState,
-    showDialogForm: (state) => state.showDialogForm
+    showDialogForm: (state) => state.showDialogForm,
+    showOverlayLoader: (state) => state.showOverlayLoader,
   },
   modules: {
     templates,
