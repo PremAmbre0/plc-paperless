@@ -14,7 +14,7 @@ import { mapActions, mapMutations } from 'vuex'; ``
 export default {
     data() {
         return {
-            data: null
+            datasetsList: null
         }
     },
     async created() {
@@ -30,7 +30,7 @@ export default {
                 // pageSize: 100,
                 // pageNo: 1,
             }).then((data) => {
-                this.data = data.list
+                this.datasetsList = data.list
                 this.closeLoaderDialog();
             });
         },
