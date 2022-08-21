@@ -71,12 +71,10 @@ export default {
         },
         deleteTemp(id) {
             if (window.confirm("Are you sure you want to deleteTemplate?")) {
-                this.openOverlayLoader()
                 this.deleteTemplate({
                     id: id,
                 }).then(() => {
                     this.getData()
-                    this.closeOverlayLoader()
                 })
             }
         },
