@@ -6,14 +6,14 @@
                 @deleteTemp="deleteTemp" />
         </div>
         <dialog-form :templateName="selectedTemplate.templateName" :imageUrl="selectedTemplate.imageUrl" :mode="mode"
-            :id="selectedTemplate.id"></dialog-form>
+            :id="selectedTemplate.id" @reloadData="getData"></dialog-form>
         <v-btn class="add-temp" fab dark color="indigo" @click="removeselectedTemplate()">
             <v-icon dark>
                 mdi-plus
             </v-icon>
         </v-btn>
-        <v-overlay :value="showOverlayLoader" color="#5243AA">
-            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        <v-overlay :value="showOverlayLoader">
+            <v-progress-circular indeterminate color="#5243AA" size="64"></v-progress-circular>
         </v-overlay>
     </div>
 </template>

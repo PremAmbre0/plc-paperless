@@ -96,10 +96,10 @@ export default new Vuex.Store({
     // logoutFail: (state, p) => {
     //   console.log("logged out");
     // },
-    openOverlayLoader(state){
+    openOverlayLoader(state) {
       state.showOverlayLoader = true;
     },
-    closeOverlayLoader(state){
+    closeOverlayLoader(state) {
       state.showOverlayLoader = false;
     },
     resetState(state) {
@@ -170,6 +170,8 @@ export default new Vuex.Store({
     },
     apiCall({ commit }, partConfig) {
       return new Promise((resolve, reject) => {
+        console.log(commit)
+        commit('openOverlayLoader')
         this._vm.$auth
           .getTokenSilently()
           .then((token) => {
@@ -185,11 +187,19 @@ export default new Vuex.Store({
               .then((response) => {
                 let data = response.data;
                 resolve(data);
+                commit('closeOverlayLoader')
+
               })
-              .catch((err) => apiErrorFunction({ err, commit, reject }));
+              .catch((err) => {
+                apiErrorFunction({ err, commit, reject })
+                commit('closeOverlayLoader')
+
+              });
           })
           .catch((err) => {
             apiErrorFunction({ err, commit, reject });
+            commit('closeOverlayLoader')
+
           });
       });
     },

@@ -50,9 +50,11 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['closeDialogForm','openOverlayLoader','closeOverlayLoader']),
+        ...mapMutations(['closeDialogForm']),
         ...mapActions('templates', ['addTemplate', 'editTemplate']),
-        
+        reloadData() {
+            this.$emit('reloadData');
+        },
         setInitialFormData() {
             if (this.templateName) {
                 this.tempName = this.templateName;
@@ -95,24 +97,22 @@ export default {
                 data.append('file', this.file);
                 data.append('filename', this.file.name);
                 data.append('name', name);
-                this.openOverlayLoader();
                 this.closeDialogForm();
                 this.addTemplate(data).then((response) => {
                     console.log(response)
-                }).then(()=>{
-                    this.closeOverlayLoader()
+                }).then(() => {
+                    this.reloadData();
                 })
             } else if (this.mode == 'edit') {
                 data.append('file', this.file);
                 data.append('name', name);
-                this.openOverlayLoader();
                 this.closeDialogForm();
                 this.editTemplate({
-                    form : data,
-                    id :this.tempID
+                    form: data,
+                    id: this.tempID
                 }).then((response) => {
-                    console.log(response)
-                    this.closeOverlayLoader();
+                    console.log(response);
+                    this.reloadData();
                 })
             }
         }
@@ -146,7 +146,7 @@ export default {
     display: block;
     cursor: pointer;
     margin: 0 auto 30px;
-    background-size:cover;
+    background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
 }
