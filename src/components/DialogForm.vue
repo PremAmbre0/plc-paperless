@@ -7,7 +7,9 @@
                         <v-text-field v-model="tempName" label="Enter your Template name" width="50vw"
                             placeholder="Template Name" outlined>
                         </v-text-field>
-                        <v-icon>mdi-close</v-icon>
+                        <v-btn icon @click="removeImage">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
                         <div for="file-input" class="imagePreviewWrapper"
                             :style="{ 'background-image': `url(${previewImage ? previewImage : '../assets/greybg.png'})` }">
                             <input ref="fileInput" type="file" accept="image/*" id="file-input" @dragover.prevent
@@ -28,7 +30,7 @@ export default {
     data() {
         return {
             tempName: '',
-            file: '',
+            file: null,
             previewImage: '',
             tempID: ''
         }
@@ -71,6 +73,7 @@ export default {
             } else {
                 this.tempID = ''
             }
+            this.file = null
 
         },
         showPreviewImage(input, file) {
@@ -88,32 +91,59 @@ export default {
         pickFile() {
             let input = this.$refs.fileInput
             let file = input.files
-            this.showPreviewImage(input, file);
+            this.showPreviewImage(input, file,);
+        },
+        formDataValidation(name, file) {
+            if (name == '') {
+                window.alert("Error: \n Template name cannot be empty")
+                return false;
+            } else if (!file) {
+                window.alert("Error: \n Can't procceed without an image file")
+                return false
+            }
+            else {
+                return true
+            }
+        },
+        removeImage() {
+            this.file = null;
+            this.previewImage = null;
         },
         async postTemplate() {
             let data = new FormData();
             let name = this.tempName
-            if (this.mode == 'new') {
-                data.append('file', this.file);
-                data.append('filename', this.file.name);
-                data.append('name', name);
-                this.closeDialogForm();
-                this.addTemplate(data).then((response) => {
-                    console.log(response)
-                }).then(() => {
-                    this.reloadData();
-                })
-            } else if (this.mode == 'edit') {
-                data.append('file', this.file);
-                data.append('name', name);
-                this.closeDialogForm();
-                this.editTemplate({
-                    form: data,
-                    id: this.tempID
-                }).then((response) => {
-                    console.log(response);
-                    this.reloadData();
-                })
+            let file;
+            if (this.mode == "new") {
+                file = this.file
+            } else {
+                file = this.previewImage
+            }
+            if (this.formDataValidation(name, file)) {
+                if (this.mode == 'new') {
+                    data.append('file', this.file);
+                    data.append('filename', this.file.name);
+                    data.append('name', name);
+                    this.closeDialogForm();
+                    this.addTemplate(data).then((response) => {
+                        console.log(response)
+                    }).then(() => {
+                        this.reloadData();
+                        this.setInitialFormData();
+                    })
+                } else if (this.mode == 'edit') {
+                    data.append('file', this.file);
+                    data.append('name', name);
+                    this.closeDialogForm();
+                    this.editTemplate({
+                        form: data,
+                        id: this.tempID
+                    }).then((response) => {
+                        console.log(response);
+                        this.reloadData();
+                        this.setInitialFormData();
+
+                    })
+                }
             }
         }
     }
