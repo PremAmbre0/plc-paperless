@@ -29,7 +29,7 @@
                         </template>
                         <v-list rounded dense>
                             <v-list-item v-for="(option, index) in options" :key="index">
-                                <v-list-item-title>{{ option.value }}
+                                <v-list-item-title @click="eventHandler(option.value, dataset._id)">{{ option.value }}
                                 </v-list-item-title>
                             </v-list-item>
                         </v-list>
@@ -50,8 +50,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import { mapActions, mapMutations } from 'vuex'; ``
+import { mapGetters, mapActions, mapMutations } from 'vuex'; ``
 
 
 export default {
@@ -72,8 +71,17 @@ export default {
         this.getData();
     },
     methods: {
-        ...mapActions('datasets', ['getDatasetsList']),
+        ...mapActions('datasets', ['getDatasetsList', 'deleteDataset']),
         ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
+        eventHandler(option, id) {
+            if (option == 'Delete') {
+                this.deleteDataset({ _id: id })
+                    .then((response) => {
+                        this.getData();
+                        console.log(response)
+                    })
+            }
+        },
         getData() {
             this.openLoaderDialog();
             this.getDatasetsList({
@@ -85,7 +93,6 @@ export default {
                 this.closeLoaderDialog();
             });
         },
-
     },
 }
 

@@ -17,7 +17,8 @@ const initialState = () => ({
   },
   uploadPercentage: 0,
   showDialogForm: false,
-  showOverlayLoader: false
+  showOverlayLoader: false,
+  currentSection:'Templates'
 });
 
 let apiErrorFunction = ({ err, commit, reject }) => {
@@ -108,6 +109,10 @@ export default new Vuex.Store({
         state[key] = initial[key];
       });
     },
+    setCurrentSection(state,payload){
+      state.currentSection = payload;
+      sessionStorage.setItem('currentSection', payload);
+    }
   },
   actions: {
     apiCallWithHeaderConfig({ commit }, { partConfig, headerConfig }) {
@@ -244,6 +249,7 @@ export default new Vuex.Store({
     currentState: (state) => state.currentState,
     showDialogForm: (state) => state.showDialogForm,
     showOverlayLoader: (state) => state.showOverlayLoader,
+    currentSection: (state) => state.currentSection,
   },
   modules: {
     templates,

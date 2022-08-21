@@ -35,6 +35,7 @@
 
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
 export default {
     data() {
         return {
@@ -42,24 +43,39 @@ export default {
             sections: ['Templates', 'Datasets', 'Jobs', 'Dashboard']
         }
     },
+    computed: {
+        ...mapGetters(['currentSection'])
+    },
+    updated() {
+        console.log(this.currentSection)
+    },
+    mounted() {
+        let section = sessionStorage.getItem('currentSection')
+        console.log(section)
+        if (section) {
+           this.selectedSection = section
+        }
+    },
     methods: {
+        ...mapMutations(['setCurrentSection']),
         async logOut() {
             this.$auth.logout({
                 returnTo: window.location.origin,
             });
         },
         Navigate(section) {
+            this.setCurrentSection(section);
             if (section == 'Templates') {
-                this.$router.replace('/templates')
+                this.$router.push('/templates')
             }
             if (section == 'Datasets') {
-                this.$router.replace('/datasets')
+                this.$router.push('/datasets')
             }
             if (section == 'Jobs') {
-                this.$router.replace('/jobs')
+                this.$router.push('/jobs')
             }
             if (section == 'Dashboard') {
-                this.$router.replace('/dashboard')
+                this.$router.push('/dashboard')
             }
         }
     }

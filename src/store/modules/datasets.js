@@ -67,6 +67,7 @@ export default {
 					return new Error(err.message);
 				});
 		},
+		
 		deleteDataset: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
