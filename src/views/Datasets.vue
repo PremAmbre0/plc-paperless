@@ -4,7 +4,7 @@
             <v-spacer></v-spacer>
             <v-divider></v-divider>
             <v-list subheader two-line>
-                <v-list-item v-for="dataset in datasetsList" :key="dataset._id">
+                <v-list-item v-ripple v-for="dataset in datasetsList" :key="dataset._id" @click="setSelectedDataset(dataset)">
                     <v-list-item-avatar>
                         <v-icon class="grey lighten-1" dark>
                             mdi-file-table
@@ -37,22 +37,21 @@
                 </v-list-item>
             </v-list>
         </v-container>
-
-        <v-btn class="add" fab dark color="indigo">
+        <dialog-form :datasetData="selectedDataset" @reloadData="getData"> </dialog-form>
+        <v-btn class="add" fab dark color="indigo" @click="removeselectedDataset">
             <v-icon dark>
                 mdi-plus
             </v-icon>
         </v-btn>
         <v-overlay :value="showOverlayLoader">
-            <v-progress-circular indeterminate color="#5243AA" size="70"></v-progress-circular>
+        <v-progress-circular indeterminate color="#5243AA" size="70"></v-progress-circular>
         </v-overlay>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'; ``
-
-
+import { mapGetters, mapActions, mapMutations } from 'vuex';
+import DialogForm from '../components/DialogForm.vue';
 export default {
     data() {
         return {
@@ -62,7 +61,12 @@ export default {
                 { value: 'Delete' },
                 { value: 'Download' },
             ],
+            mode:'',
+            selectedDataset: {},
         }
+    },
+    components:{
+        DialogForm
     },
     computed: {
         ...mapGetters(['showOverlayLoader'])
@@ -72,7 +76,7 @@ export default {
     },
     methods: {
         ...mapActions('datasets', ['getDatasetsList', 'deleteDataset']),
-        ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
+        ...mapMutations(['openDialogForm',]),
         eventHandler(option, id) {
             if (option == 'Delete') {
                 this.deleteDataset({ _id: id })
@@ -83,15 +87,24 @@ export default {
             }
         },
         getData() {
-            this.openLoaderDialog();
             this.getDatasetsList({
-                // searchText: 'test1',
-                // pageSize: 100,
-                // pageNo: 1,
             }).then((data) => {
                 this.datasetsList = data.list
-                this.closeLoaderDialog();
             });
+        },
+        setSelectedDataset(dataset) {
+            this.selectedDataset.datasetName = dataset.name;
+            this.selectedDataset.headers = dataset.headers;
+            this.selectedDataset.id = dataset._id;
+            this.selectedDataset.mode = 'edit'
+            this.openDialogForm()
+        },
+        removeselectedDataset() {
+            this.selectedDataset.datasetName = '';
+            this.selectedDataset.headers = []
+            this.selectedDataset.id = '';
+            this.selectedDataset.mode = 'new'
+            this.openDialogForm()
         },
     },
 }

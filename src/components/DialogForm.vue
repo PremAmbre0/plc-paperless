@@ -1,8 +1,8 @@
 <template>
-    <v-dialog v-model="showDialogForm" fullscreen>
-        <div class="form-wrapper" @click.self="closeDialogForm">
+    <v-dialog v-model="showDialogForm">
+        <div class="form-wrapper" @click.self="closeDialogForm()">
             <div class="template-form">
-                <v-card>
+                <v-card v-if="currentSection == 'Templates'" height="80vh">
                     <form @submit.prevent>
                         <v-text-field v-model="tempName" label="Enter your Template name" width="50vw"
                             placeholder="Template Name" outlined>
@@ -19,6 +19,22 @@
                         <v-btn plain color="#00875A" @click="postTemplate" type="submit">submit</v-btn>
                     </form>
                 </v-card>
+                <v-card v-if="currentSection == 'Datasets'">
+                    <v-card-text style="height: 100%;">
+                        <v-form @submit.prevent>
+                            <v-text-field v-model="datasetName" label="Enter your Datset Name name"
+                                placeholder="Template Name" outlined></v-text-field>
+                            <v-file-input v-if="datasetData.mode == 'new'" v-model="file" truncate-length="15"
+                                show-size>
+                            </v-file-input>
+                            <v-data-table v-if="datasetData.mode == 'edit'" :headers="headers" :items="rows"
+                                :items-per-page="5" class="elevation-1">
+                            </v-data-table>
+                            <v-btn plain color="#00875A" @click="postDataset" type="submit">submit</v-btn>
+                        </v-form>
+                    </v-card-text>
+
+                </v-card>
             </div>
         </div>
     </v-dialog>
@@ -32,46 +48,78 @@ export default {
             tempName: '',
             file: null,
             previewImage: '',
-            tempID: ''
+            tempID: '',
+            datasetName: '',
+            headers: '',
+            rows: [],
+            datasetID: '',
         }
     },
     props: {
-        templateName: { required: false, type: String },
-        imageUrl: { required: false, type: String },
-        mode: { required: true, type: String },
-        id: { required: false, type: String },
+        templateData: { required: false, type: Object },
+        datasetData: { required: false, type: Object }
     },
     computed: {
-        ...mapGetters(['showDialogForm']),
+        ...mapGetters(['showDialogForm', 'currentSection']),
     },
     watch: {
         showDialogForm(newValue) {
             if (newValue == true) {
                 this.setInitialFormData();
             }
-        }
+            if (this.datasetData) {
+                this.datasetHeaders();
+                this.getDatasetData({
+                    _id: this.datasetID
+                }).then((response) => {
+                    // console.log(response.rows, this.headers);
+                    this.rows = response.rows;
+                })
+            }
+        },
+
     },
     methods: {
         ...mapMutations(['closeDialogForm']),
         ...mapActions('templates', ['addTemplate', 'editTemplate']),
+        ...mapActions('datasets', ['getDatasetData', 'uploadDataset']),
         reloadData() {
             this.$emit('reloadData');
         },
         setInitialFormData() {
-            if (this.templateName) {
-                this.tempName = this.templateName;
-            } else {
-                this.tempName = ''
+            if (this.templateData) {
+                if (this.templateData.templateName) {
+                    this.tempName = this.templateData.templateName;
+                } else {
+                    this.tempName = ''
+                }
+                if (this.templateData.imageUrl) {
+                    this.previewImage = this.templateData.imageUrl;
+                } else {
+                    this.previewImage = ''
+                }
+                if (this.templateData.id) {
+                    this.tempID = this.templateData.id;
+                } else {
+                    this.tempID = ''
+                }
             }
-            if (this.imageUrl) {
-                this.previewImage = this.imageUrl;
-            } else {
-                this.previewImage = ''
-            }
-            if (this.id) {
-                this.tempID = this.id;
-            } else {
-                this.tempID = ''
+            if (this.datasetData) {
+                if (this.datasetData.datasetName) {
+                    this.datasetName = this.datasetData.datasetName;
+                } else {
+                    this.datasetName = ''
+                }
+                if (this.datasetData.headers) {
+                    this.headers = this.datasetData.headers;
+                } else {
+                    this.headers = ''
+                }
+                if (this.datasetData.id) {
+                    this.datasetID = this.datasetData.id;
+                } else {
+                    this.datasetID = ''
+                }
             }
             this.file = null
 
@@ -97,7 +145,8 @@ export default {
             if (name == '') {
                 window.alert("Error: \n Template name cannot be empty")
                 return false;
-            } else if (!file) {
+            }
+            if (!file) {
                 window.alert("Error: \n Can't procceed without an image file")
                 return false
             }
@@ -109,7 +158,7 @@ export default {
             this.file = null;
             this.previewImage = null;
         },
-        async postTemplate() {
+        postTemplate() {
             let data = new FormData();
             let name = this.tempName
             let file;
@@ -119,7 +168,7 @@ export default {
                 file = this.previewImage
             }
             if (this.formDataValidation(name, file)) {
-                if (this.mode == 'new') {
+                if (this.templateData.mode == 'new') {
                     data.append('file', this.file);
                     data.append('filename', this.file.name);
                     data.append('name', name);
@@ -130,7 +179,8 @@ export default {
                         this.reloadData();
                         this.setInitialFormData();
                     })
-                } else if (this.mode == 'edit') {
+                } else if (this.templateData.mode == 'edit') {
+                    console.log('hi')
                     data.append('file', this.file);
                     data.append('name', name);
                     this.closeDialogForm();
@@ -145,6 +195,31 @@ export default {
                     })
                 }
             }
+        },
+        datasetHeaders() {
+            let headers = []
+            this.headers.forEach(function (header) {
+                headers.push(
+                    { 'text': header, 'value': header }
+                )
+            })
+            this.headers = headers;
+        },
+        postDataset() {
+            let data = new FormData();
+            let name = this.datasetName;
+            let file = this.file
+            if (this.formDataValidation(name, file)) {
+                data.append('file', file);
+                data.append('name', name)
+                this.closeDialogForm();
+                this.uploadDataset(data).then((response) => {
+                    console.log(response)
+                }).then(() => {
+                    this.reloadData();
+                    this.setInitialFormData();
+                })
+            }
         }
     }
 }
@@ -152,7 +227,8 @@ export default {
 
 <style lang="scss" scoped>
 .template-form {
-    width: 50vw;
+    width: 90vw;
+    height: 100%;
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
@@ -171,8 +247,9 @@ export default {
 
 .imagePreviewWrapper {
     display: block;
-    max-width: 50vw;
-    min-height: 20rem;
+    width: 75vw;
+    max-width: 100rem;
+    min-height: 40vh;
     display: block;
     cursor: pointer;
     margin: 0 auto 30px;
@@ -183,7 +260,7 @@ export default {
 
 input[type="file"] {
     opacity: 0;
-    min-height: 20rem;
+    height:inherit;
     width: 100%;
 }
 </style>

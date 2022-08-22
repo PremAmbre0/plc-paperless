@@ -46,14 +46,11 @@ export default {
     computed: {
         ...mapGetters(['currentSection'])
     },
-    updated() {
-        console.log(this.currentSection)
-    },
-    mounted() {
+    created() {
         let section = sessionStorage.getItem('currentSection')
-        console.log(section)
         if (section) {
            this.selectedSection = section
+           this.setCurrentSection(section);
         }
     },
     methods: {

@@ -5,8 +5,7 @@
                 :imageUrl="template.imageUrl" :id="template._id" @click.native="setSelectedTemplate(template);"
                 @deleteTemp="deleteTemp" />
         </div>
-        <dialog-form :templateName="selectedTemplate.templateName" :imageUrl="selectedTemplate.imageUrl" :mode="mode"
-            :id="selectedTemplate.id" @reloadData="getData"></dialog-form>
+        <dialog-form :templateData="selectedTemplate" @reloadData="getData"></dialog-form>
         <v-btn class="add-temp" fab dark color="indigo" @click="removeselectedTemplate()">
             <v-icon dark>
                 mdi-plus
@@ -28,9 +27,9 @@ export default {
             selectedTemplate: {
                 templateName: '',
                 imageUrl: '',
-                id: ''
+                id: '',
+                mode: '',
             },
-            mode: '',
             templatesList: [],
         }
     },
@@ -46,7 +45,7 @@ export default {
     },
     methods: {
         ...mapActions('templates', ['getTemplatesList', 'deleteTemplate']),
-        ...mapMutations(["openDialogForm","openOverlayLoader","closeOverlayLoader"]),
+        ...mapMutations(["openDialogForm"]),
         getData() {
             this.getTemplatesList({
                 pageSize: 100,
@@ -59,14 +58,14 @@ export default {
             this.selectedTemplate.templateName = template.name;
             this.selectedTemplate.imageUrl = template.imageUrl;
             this.selectedTemplate.id = template._id;
-            this.mode = 'edit'
+            this.selectedTemplate.mode = 'edit'
             this.openDialogForm()
         },
         removeselectedTemplate() {
             this.selectedTemplate.templateName = '';
             this.selectedTemplate.imageUrl = '';
             this.selectedTemplate.id = '';
-            this.mode = 'new'
+            this.selectedTemplate.mode = 'new'
             this.openDialogForm()
         },
         deleteTemp(id) {
