@@ -3,7 +3,7 @@
         <div class="template-container">
             <template-cards v-for="template in templatesList" :key="template.createdOn" :name="template.name"
                 :imageUrl="template.imageUrl" :id="template._id" @click.native="setSelectedTemplate(template);"
-                @deleteTemp="deleteTemp" />
+                @deleteTemp="deleteTemp" @openBuilder="openBuilder"/>
         </div>
         <dialog-form :existingFormData="selectedTemplate" @reloadData="getData"></dialog-form>
         <v-btn class="add-temp" fab dark color="indigo" @click="removeselectedTemplate()">
@@ -72,6 +72,10 @@ export default {
                 })
             }
         },
+        openBuilder(id){
+            console.log(id)
+            this.$router.push('/builder/'+id)
+        }
     },
 }
 

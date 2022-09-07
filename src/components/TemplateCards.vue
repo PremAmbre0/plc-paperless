@@ -61,6 +61,10 @@ export default {
         if(option=='Delete'){
             this.$emit('deleteTemp',this.id)
         }
+        if(option=='Open in Builder'){
+            this.$emit('openBuilder',this.id)
+        }
+
     }
     }
 }
