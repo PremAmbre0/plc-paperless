@@ -4,7 +4,8 @@
             <v-spacer></v-spacer>
             <v-divider></v-divider>
             <v-list subheader two-line>
-                <v-list-item v-ripple v-for="dataset in datasetsList" :key="dataset._id" @click="setSelectedDataset(dataset)">
+                <v-list-item v-ripple v-for="dataset in datasetsList" :key="dataset._id"
+                    @click="setSelectedDataset(dataset)">
                     <v-list-item-avatar>
                         <v-icon class="grey lighten-1" dark>
                             mdi-file-table
@@ -29,7 +30,7 @@
                         </template>
                         <v-list rounded dense>
                             <v-list-item v-for="(option, index) in options" :key="index">
-                                <v-list-item-title @click="eventHandler(option.value, dataset._id)">{{ option.value }}
+                                <v-list-item-title @click="eventHandler(option.value, dataset._id)">{{  option.value  }}
                                 </v-list-item-title>
                             </v-list-item>
                         </v-list>
@@ -37,15 +38,15 @@
                 </v-list-item>
             </v-list>
         </v-container>
-        <dialog-form :datasetData="selectedDataset" @reloadData="getData"> </dialog-form>
+        <v-overlay :value="showOverlayLoader">
+            <v-progress-circular indeterminate color="#5243AA" size="70"></v-progress-circular>
+        </v-overlay>
+        <dialog-form :existingFormData="selectedDataset" @reloadData="getData"> </dialog-form>
         <v-btn class="add" fab dark color="indigo" @click="removeselectedDataset">
             <v-icon dark>
                 mdi-plus
             </v-icon>
         </v-btn>
-        <v-overlay :value="showOverlayLoader">
-        <v-progress-circular indeterminate color="#5243AA" size="70"></v-progress-circular>
-        </v-overlay>
     </div>
 </template>
 
@@ -61,11 +62,11 @@ export default {
                 { value: 'Delete' },
                 { value: 'Download' },
             ],
-            mode:'',
+            mode: '',
             selectedDataset: {},
         }
     },
-    components:{
+    components: {
         DialogForm
     },
     computed: {
@@ -93,15 +94,16 @@ export default {
             });
         },
         setSelectedDataset(dataset) {
-            this.selectedDataset.datasetName = dataset.name;
-            this.selectedDataset.headers = dataset.headers;
+            this.selectedDataset.name = dataset.name;
+            this.selectedDataset.existingFile = { headers: dataset.headers };
             this.selectedDataset.id = dataset._id;
             this.selectedDataset.mode = 'edit'
             this.openDialogForm()
+
         },
         removeselectedDataset() {
-            this.selectedDataset.datasetName = '';
-            this.selectedDataset.headers = []
+            this.selectedDataset.name = '';
+            this.selectedDataset.existingFile = null;
             this.selectedDataset.id = '';
             this.selectedDataset.mode = 'new'
             this.openDialogForm()

@@ -1,145 +1,229 @@
 <template>
-    <v-dialog v-model="showDialogForm">
-        <div class="form-wrapper" @click.self="closeDialogForm()">
-            <div class="template-form">
-                <v-card v-if="currentSection == 'Templates'" height="80vh">
-                    <form @submit.prevent>
-                        <v-text-field v-model="tempName" label="Enter your Template name" width="50vw"
-                            placeholder="Template Name" outlined>
-                        </v-text-field>
-                        <v-btn icon @click="removeImage">
-                            <v-icon>mdi-close</v-icon>
-                        </v-btn>
-                        <div for="file-input" class="imagePreviewWrapper"
-                            :style="{ 'background-image': `url(${previewImage ? previewImage : '../assets/greybg.png'})` }">
-                            <input ref="fileInput" type="file" accept="image/*" id="file-input" @dragover.prevent
-                                @drop.prevent @input="pickFile">
-                        </div>
-                        <v-btn plain color="#BF2600" @click="closeDialogForm">cancel</v-btn>
-                        <v-btn plain color="#00875A" @click="postTemplate" type="submit">submit</v-btn>
-                    </form>
-                </v-card>
-                <v-card v-if="currentSection == 'Datasets'">
-                    <v-card-text style="height: 100%;">
-                        <v-form @submit.prevent>
-                            <v-text-field v-model="datasetName" label="Enter your Datset Name name"
-                                placeholder="Template Name" outlined></v-text-field>
-                            <v-file-input v-if="datasetData.mode == 'new'" v-model="file" truncate-length="15"
-                                show-size>
-                            </v-file-input>
-                            <v-data-table v-if="datasetData.mode == 'edit'" :headers="headers" :items="rows"
-                                :items-per-page="5" class="elevation-1">
+    <v-dialog v-model="showDialogForm" max-width="600" persistent>
+        <v-card max-width="600">
+            <form @submit.prevent>
+                <v-text-field v-model="name" :label="placeholderText" width="50vw" :placeholder="placeholderTitle"
+                    outlined>
+                </v-text-field>
+                <div class="droparea" @dragover.prevent @drop.stop.prevent>
+                    <div class="droparea-empty" v-if="mode == 'new' && !inputFile">
+                        <label for="fileInput" class="label"> Click here to drop or select the file</label>
+                        <input ref="fileInput" type="file" @input="filePickHandler($event)" id="fileInput">
+                    </div>
+                    <div class="droparea-filled" v-if="mode == 'edit' || inputFile"
+                        :style="{ overflowY: overflowProperty }">
+                        <div class="file-wrapper">
+                            <v-btn class="close-btn" color="$black" tile elevation="2" x-small @click="removeFile">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                            <img ref="fileInput" class="img" v-if="currentSection == 'Templates'"
+                                :src="existingFile ? existingFile : inputFile">
+                            <v-data-table v-if="currentSection == 'Datasets'" :items-per-page="5"
+                                :headers="existingFile ? existingFile.headers : inputFile.headers"
+                                :items="existingFile ? existingFile.rows : inputFile.rows" class="elevation-1">
                             </v-data-table>
-                            <v-btn plain color="#00875A" @click="postDataset" type="submit">submit</v-btn>
-                        </v-form>
-                    </v-card-text>
-
-                </v-card>
-            </div>
-        </div>
+                        </div>
+                    </div>
+                </div>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn plain color="#BF2600" @click="closeDialogForm">cancel</v-btn>
+                    <v-btn plain color="#00875A" @click="submitEventHandler()" type="submit">submit</v-btn>
+                </v-card-actions>
+            </form>
+        </v-card>
     </v-dialog>
+
 </template>
 
 <script>
+import { read, utils } from 'xlsx';
 import { mapGetters, mapMutations, mapActions } from "vuex";
+
 export default {
     data() {
         return {
-            tempName: '',
-            file: null,
-            previewImage: '',
-            tempID: '',
-            datasetName: '',
-            headers: '',
-            rows: [],
-            datasetID: '',
+            name: '',
+            id: '',
+            inputFile: null,
+            existingFile: null,
+            mode: '',
+            fileToPost: null,
         }
     },
     props: {
-        templateData: { required: false, type: Object },
-        datasetData: { required: false, type: Object }
+        existingFormData: { type: Object },
     },
     computed: {
         ...mapGetters(['showDialogForm', 'currentSection']),
+        placeholderText() {
+            if (this.currentSection == "Templates") {
+                return "Enter Your template name"
+            }
+            else {
+                return "Enter Your dataset name"
+            }
+        }, placeholderTitle() {
+            if (this.currentSection == "Templates") {
+                return "Template Name"
+            }
+            else {
+                return "Dataset Name"
+            }
+        }, overflowProperty() {
+            if (this.currentSection == "Templates") {
+                return "hidden"
+            }
+            else {
+                return "scroll"
+            }
+        },
     },
     watch: {
         showDialogForm(newValue) {
             if (newValue == true) {
                 this.setInitialFormData();
             }
-            if (this.datasetData) {
-                this.datasetHeaders();
+            if (newValue == false) {
+                this.resetFormData();
+            }
+            if (this.existingFormData.mode == 'edit' && this.currentSection == 'Datasets') {
+                this.openOverlayLoader();
                 this.getDatasetData({
-                    _id: this.datasetID
+                    _id: this.id
                 }).then((response) => {
-                    // console.log(response.rows, this.headers);
-                    this.rows = response.rows;
+                    this.getdatasetHeaders()
+                    this.closeOverlayLoader();
+                    this.existingFile.rows = response.rows;
                 })
             }
         },
-
+        existingFile(newValue) {
+            if (newValue == null) {
+                this.mode = "new";
+            }
+        }
     },
     methods: {
-        ...mapMutations(['closeDialogForm']),
+        ...mapMutations(['closeDialogForm', 'openOverlayLoader', 'closeOverlayLoader']),
         ...mapActions('templates', ['addTemplate', 'editTemplate']),
         ...mapActions('datasets', ['getDatasetData', 'uploadDataset']),
         reloadData() {
             this.$emit('reloadData');
         },
+        submitEventHandler() {
+            if (this.currentSection == 'Templates') {
+                this.postTemplate();
+            }
+            else {
+                this.postDataset();
+            }
+        },
+        getdatasetHeaders() {
+            let headers = []
+            var obj = this.existingFile
+            obj.headers.forEach(function (header) {
+                headers.push(
+                    { text: header, value: header }
+                )
+            })
+            this.existingFile.headers = headers;
+        },
         setInitialFormData() {
-            if (this.templateData) {
-                if (this.templateData.templateName) {
-                    this.tempName = this.templateData.templateName;
-                } else {
-                    this.tempName = ''
-                }
-                if (this.templateData.imageUrl) {
-                    this.previewImage = this.templateData.imageUrl;
-                } else {
-                    this.previewImage = ''
-                }
-                if (this.templateData.id) {
-                    this.tempID = this.templateData.id;
-                } else {
-                    this.tempID = ''
-                }
+            if (this.existingFormData.name) {
+                this.name = this.existingFormData.name;
             }
-            if (this.datasetData) {
-                if (this.datasetData.datasetName) {
-                    this.datasetName = this.datasetData.datasetName;
-                } else {
-                    this.datasetName = ''
-                }
-                if (this.datasetData.headers) {
-                    this.headers = this.datasetData.headers;
-                } else {
-                    this.headers = ''
-                }
-                if (this.datasetData.id) {
-                    this.datasetID = this.datasetData.id;
-                } else {
-                    this.datasetID = ''
-                }
+            else {
+                this.name = ''
             }
-            this.file = null
-
+            if (this.existingFormData.id) {
+                this.id = this.existingFormData.id;
+            }
+            else {
+                this._id = ''
+            }
+            if (this.existingFormData.existingFile) {
+                this.existingFile = this.existingFormData.existingFile;
+            }
+            else {
+                this.existingFile = ''
+            }
+            if (this.existingFormData.mode) {
+                this.mode = this.existingFormData.mode;
+            }
+            else {
+                this.mode = ''
+            }
+            this.inputfile = null;
         },
         showPreviewImage(input, file) {
             if (file && file[0]) {
                 let reader = new FileReader
                 reader.onload = e => {
-                    this.previewImage = e.target.result;
-                    this.file = file[0]
+                    this.inputFile = e.target.result;
                 }
                 reader.readAsDataURL(file[0])
                 this.$emit('input', file[0])
-
             }
         },
-        pickFile() {
+        filePickHandler(e) {
+            if (this.currentSection == 'Templates') {
+                this.pickImageFile();
+            }
+            else {
+                this.pickXLSXFile(e)
+            }
+        },
+        pickImageFile() {
             let input = this.$refs.fileInput
             let file = input.files
+            this.fileToPost = file[0]
             this.showPreviewImage(input, file,);
+        },
+        removeFile() {
+            if (this.inputFile) {
+                this.inputFile = null;
+            }
+            if (this.existingFile) {
+                this.existingFile = null;
+            }
+        },
+        pickXLSXFile(e) {
+            var f = e.target.files[0];
+            this.fileToPost = f;
+            var reader = new FileReader();
+            reader.onload = e => {
+                var data = e.target.result;
+                var workbook = read(data);
+                let sheet = workbook.Sheets.Sheet1
+                let aoa = utils.sheet_to_json(sheet, { header: 1 })
+                let headersToIterate = aoa[0]
+                let headersForDataset = []
+                headersToIterate.forEach((ele) => {
+                    headersForDataset.push({
+                        text: ele,
+                        value: ele
+                    })
+                })
+                let rowsToIterate = aoa.slice(1)
+                let rowsForDataset = []
+                rowsToIterate.forEach((row) => {
+                    let obj = {}
+                    for (var i = 0; i < row.length; i++) {
+                        obj[headersToIterate[i]] = row[i]
+                    }
+                    rowsForDataset.push(obj)
+                })
+                var obj = {
+                    headers: headersForDataset,
+                    rows: rowsForDataset
+                }
+                this.$nextTick(() => {
+                    this.inputFile = obj
+                })
+            };
+            reader.readAsArrayBuffer(f);
+            this.$emit('input', f)
         },
         formDataValidation(name, file) {
             if (name == '') {
@@ -154,23 +238,14 @@ export default {
                 return true
             }
         },
-        removeImage() {
-            this.file = null;
-            this.previewImage = null;
-        },
         postTemplate() {
             let data = new FormData();
-            let name = this.tempName
-            let file;
-            if (this.mode == "new") {
-                file = this.file
-            } else {
-                file = this.previewImage
-            }
+            let name = this.name
+            let file = this.fileToPost
             if (this.formDataValidation(name, file)) {
-                if (this.templateData.mode == 'new') {
-                    data.append('file', this.file);
-                    data.append('filename', this.file.name);
+                if (this.existingFormData.mode == 'new') {
+                    data.append('file', file);
+                    data.append('filename', this.fileName);
                     data.append('name', name);
                     this.closeDialogForm();
                     this.addTemplate(data).then((response) => {
@@ -179,14 +254,13 @@ export default {
                         this.reloadData();
                         this.setInitialFormData();
                     })
-                } else if (this.templateData.mode == 'edit') {
-                    console.log('hi')
-                    data.append('file', this.file);
+                } else if (this.existingFormData.mode == 'edit') {
+                    data.append('file', file);
                     data.append('name', name);
                     this.closeDialogForm();
                     this.editTemplate({
                         form: data,
-                        id: this.tempID
+                        id: this.id
                     }).then((response) => {
                         console.log(response);
                         this.reloadData();
@@ -196,22 +270,14 @@ export default {
                 }
             }
         },
-        datasetHeaders() {
-            let headers = []
-            this.headers.forEach(function (header) {
-                headers.push(
-                    { 'text': header, 'value': header }
-                )
-            })
-            this.headers = headers;
-        },
         postDataset() {
             let data = new FormData();
-            let name = this.datasetName;
-            let file = this.file
+            let name = this.name;
+            let file = this.fileToPost
             if (this.formDataValidation(name, file)) {
                 data.append('file', file);
                 data.append('name', name)
+                console.log(...data)
                 this.closeDialogForm();
                 this.uploadDataset(data).then((response) => {
                     console.log(response)
@@ -220,47 +286,87 @@ export default {
                     this.setInitialFormData();
                 })
             }
+        },
+        resetFormData() {
+            this.name = '';
+            this.id = '';
+            this.inputFile = null;
+            this.existingFile = null;
+            this.mode = '';
+            this.fileToPost = null;
         }
     }
 }
+
 </script>
 
-<style lang="scss" scoped>
-.template-form {
-    width: 90vw;
-    height: 100%;
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 15%
-}
 
+<style lang="scss" scoped>
 .v-card {
     padding: 5%;
 }
 
-.form-wrapper {
-    height: 100%;
+.droparea {
+    display: block;
+    height: 50vh;
     width: 100%;
-    background-color: rgba($black , 0.8);
+
+    &-empty {
+        height: 100%;
+        width: 100%;
+        background-color: $light-three;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2rem;
+        padding: 5%;
+        text-align: center;
+        color: $light-one;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        position: relative;
+    }
+
+    &-filled {
+        display: flex;
+        justify-content: center;
+        height: 90%;
+    }
 }
 
-.imagePreviewWrapper {
-    display: block;
-    width: 75vw;
-    max-width: 100rem;
-    min-height: 40vh;
-    display: block;
-    cursor: pointer;
-    margin: 0 auto 30px;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+.img {
+    object-fit: contain;
+    height: 100%;
+}
+
+.label {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
 }
 
 input[type="file"] {
-    opacity: 0;
-    height:inherit;
+    height: 100%;
     width: 100%;
+    opacity: 0;
+    position: absolute;
+}
+
+.file-wrapper {
+    position: relative;
+}
+
+.v-btn.close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+}
+
+.v-icon {
+    font-size: 1rem;
 }
 </style>

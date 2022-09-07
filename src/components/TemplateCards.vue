@@ -1,6 +1,6 @@
 <template>
     <v-card class="mx-auto"  outlined elevation="4">
-        <v-img :src="imageUrl" height="180px"></v-img>
+        <v-img :src="imageUrl" height="180px" contain></v-img>
         <v-card-actions>  
             <v-card-title>
                 {{name}}
@@ -66,5 +66,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+    .v-card{
+        padding-top: 5%;
+    }
 </style>

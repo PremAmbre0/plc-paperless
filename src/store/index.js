@@ -175,7 +175,7 @@ export default new Vuex.Store({
     },
     apiCall({ commit }, partConfig) {
       return new Promise((resolve, reject) => {
-        console.log(commit)
+        // console.log(commit)
         commit('openOverlayLoader')
         this._vm.$auth
           .getTokenSilently()

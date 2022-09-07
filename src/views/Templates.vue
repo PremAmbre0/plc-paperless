@@ -5,7 +5,7 @@
                 :imageUrl="template.imageUrl" :id="template._id" @click.native="setSelectedTemplate(template);"
                 @deleteTemp="deleteTemp" />
         </div>
-        <dialog-form :templateData="selectedTemplate" @reloadData="getData"></dialog-form>
+        <dialog-form :existingFormData="selectedTemplate" @reloadData="getData"></dialog-form>
         <v-btn class="add-temp" fab dark color="indigo" @click="removeselectedTemplate()">
             <v-icon dark>
                 mdi-plus
@@ -24,12 +24,7 @@ import DialogForm from "../components/DialogForm.vue"
 export default {
     data() {
         return {
-            selectedTemplate: {
-                templateName: '',
-                imageUrl: '',
-                id: '',
-                mode: '',
-            },
+            selectedTemplate: {},
             templatesList: [],
         }
     },
@@ -55,15 +50,15 @@ export default {
             });
         },
         setSelectedTemplate(template) {
-            this.selectedTemplate.templateName = template.name;
-            this.selectedTemplate.imageUrl = template.imageUrl;
+            this.selectedTemplate.name = template.name;
+            this.selectedTemplate.existingFile = template.imageUrl;
             this.selectedTemplate.id = template._id;
             this.selectedTemplate.mode = 'edit'
             this.openDialogForm()
         },
         removeselectedTemplate() {
-            this.selectedTemplate.templateName = '';
-            this.selectedTemplate.imageUrl = '';
+            this.selectedTemplate.name = '';
+            this.selectedTemplate.existingFile = '';
             this.selectedTemplate.id = '';
             this.selectedTemplate.mode = 'new'
             this.openDialogForm()
@@ -77,7 +72,6 @@ export default {
                 })
             }
         },
-
     },
 }
 
