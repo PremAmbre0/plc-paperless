@@ -41,6 +41,27 @@ export default {
 					return { totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
+		getTemplateById: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: '',
+					url: urlForAPIEndpoint + payload.id,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					return data
+				})
+				.catch((err) => {
+					console.error("Err:", err);
+					fail(err.toString() || "Failed to Load Templates List");
+					return null;
+				});
+
+		},
 		addTemplate: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(

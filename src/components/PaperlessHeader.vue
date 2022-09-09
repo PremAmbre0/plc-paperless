@@ -18,7 +18,7 @@
                 <v-icon>mdi-account</v-icon>
             </v-btn>
         </v-app-bar>
-        <v-toolbar class="navbar" flat dense height="10" width="100%">
+        <v-toolbar class="navbar" flat dense height="10" width="100%" v-if="currentSection!='Builder'">
             <v-select dense hide-selected v-model="selectedSection" class="selectdropdown" :items="sections" solo
                 @change="Navigate(selectedSection)">
             </v-select>
@@ -82,7 +82,7 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-    margin-top: 7.5rem
+    margin-top: 3rem
 }
 
 .selectdropdown {

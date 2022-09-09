@@ -73,7 +73,6 @@ export default {
             }
         },
         openBuilder(id){
-            console.log(id)
             this.$router.push('/builder/'+id)
         }
     },
