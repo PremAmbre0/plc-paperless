@@ -1,6 +1,6 @@
 <template>
     <div class="builder-wrapper">
-        <v-navigation-drawer permanent height="100vh" width="20vw">
+        <!-- <v-navigation-drawer permanent height="100vh" width="20vw">
             <v-list dense nav ripple width="20vw">
                 <v-list-item v-for="tool in tools" :key="tool.tool" @click="selectedTool = tool.text">
                     <v-list-item-icon>
@@ -12,26 +12,27 @@
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
-        </v-navigation-drawer>
-        <div class="use-dataset-wrapper" v-if="selectedTool =='Use Dataset'">
+        </v-navigation-drawer> -->
+        <div class="use-dataset-wrapper" v-if="selectedTool == 'Use Dataset'">
             <v-autocomplete v-model="selectedDatasetName" :items="datasetNames" dense clearable
                 @click:clear="resetData()" label="select Dataset" placeholder="dataset"></v-autocomplete>
             <v-select v-if="datasetHeaders.length > 0" v-model="selectedHeader" :items="datasetHeaders" outlined filled
                 label="select Header" placeholder="header">
             </v-select>
             <v-list dense disabled>
-                <v-list-item-title class="text-h6">{{selectedHeader}}</v-list-item-title>
+                <v-list-item-title class="text-h6">{{
+                selectedHeader
+                }}</v-list-item-title>
                 <v-list-item-group color="primary">
                     <v-list-item color=" #C1C7D0" v-for="(data, i) in dataOfSelectedHeader" :key="i">
                         <v-list-item-content>
                             <v-list-item-title v-text="data"></v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-
                 </v-list-item-group>
             </v-list>
         </div>
-        <div class="text-editor-wrapper" v-if="selectedTool =='Add Text'">
+        <div class="text-editor-wrapper" v-if="selectedTool == 'Add Text'">
             <div class="text-editor">
                 <div class="text-editor-setfont">
                     <v-select v-model="fontFamily" :items="fontFamilyList" item-text="text" item-value="value" dense
@@ -82,27 +83,32 @@
                 </div>
             </div>
         </div>
-        <div class="add-image-wrapper" v-if="selectedTool =='Add image'">
+        <div class="add-image-wrapper" v-if="selectedTool == 'Add image'">
             <v-file-input truncate-length="15"></v-file-input>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas ref="canvas" id="canvas" :height="canvasHeight" :width="canvasWidth"></canvas>
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex';
+import { fabric } from "fabric";
+import { mapActions, mapMutations } from "vuex";
 export default {
     data() {
         return {
-            selectedTool: 'Add Text',
+            canvas: null,
+            selectedTool: "Add Text",
             templateData: null,
             datasetsList: [],
-            selectedDatasetName: '',
-            selectedHeader: '',
+            selectedDatasetName: "",
+            selectedHeader: "",
             dataOfSelectedHeader: [],
             tools: [
-                { text: 'Add Text', icon: 'mdi-format-annotation-plus' },
-                { text: 'Use Dataset', icon: 'mdi-file-table' },
-                { text: 'Add image', icon: 'mdi-image' },
+                { text: "Add Text", icon: "mdi-format-annotation-plus" },
+                { text: "Use Dataset", icon: "mdi-file-table" },
+                { text: "Add image", icon: "mdi-image" },
             ],
             fontSizeList: [],
             fontFamilyList: [
@@ -163,71 +169,77 @@ export default {
             fontWeight: "normal",
             fontStyle: "normal",
             underline: false,
-        }
+        };
     },
-    updated() {
-        console.log(this.selectedHeader)
-        console.log(this.dataOfSelectedHeader)
-    },
-    beforeMount() {
+
+    mounted() {
         this.getTemplateData();
         this.getDatasets();
-    },
-    mounted() {
+        this.canvas = new fabric.Canvas(this.$refs.canvas);
+        console.log(this.canvas);
         this.generateFontSizeList();
-        this.setCurrentSection("Builder")
+        this.setCurrentSection("Builder");
     },
     computed: {
         datasetNames() {
             let array = [];
-            this.datasetsList.forEach(dataset => {
-                array.push(dataset.name)
-            })
-            return array
+            this.datasetsList.forEach((dataset) => {
+                array.push(dataset.name);
+            });
+            return array;
         },
         datasetHeaders() {
-            let headers = []
-            this.datasetsList.forEach(dataset => {
+            let headers = [];
+            this.datasetsList.forEach((dataset) => {
                 if (dataset.name == this.selectedDatasetName) {
-                    headers = dataset.headers
+                    headers = dataset.headers;
                 }
-            })
-            return headers
-        }
+            });
+            return headers;
+        },
+        canvasWidth() {
+            return (window.outerWidth / 100) * 70;
+        },
+        canvasHeight() {
+            return (window.outerHeight / 100) * 80;
+        },
+        canvasBackground() {
+            return this.templateData.imageUrl;
+        },
     },
     watch: {
         selectedHeader(newValue) {
             if (newValue.length > 0) {
                 this.getDataOfSelectedHeader();
             }
-        }
+        },
     },
     methods: {
-        ...mapMutations(['setCurrentSection']),
-        ...mapActions('templates', ['getTemplateById']),
-        ...mapActions('datasets', ['getDatasetsList', 'getDatasetData']),
+        ...mapMutations(["setCurrentSection"]),
+        ...mapActions("templates", ["getTemplateById"]),
+        ...mapActions("datasets", ["getDatasetsList", "getDatasetData"]),
         getTemplateData() {
             this.getTemplateById({
-                id: this.$route.params.id
+                id: this.$route.params.id,
             }).then((response) => {
                 this.templateData = response.data;
+                this.InitilaizeCanvas(this.templateData.imageUrl);
             });
         },
         getDatasets() {
-            this.getDatasetsList({
-            }).then((data) => {
-                this.datasetsList = data.list
+            this.getDatasetsList({}).then((data) => {
+                this.datasetsList = data.list;
             });
         },
         getselectedDataset() {
             let datasetToReturn;
-            this.datasetsList.forEach(dataset => {
-                console.log(this.selectedDatasetName)
+            this.datasetsList.forEach((dataset) => {
+                console.log(this.selectedDatasetName);
                 if (dataset.name == this.selectedDatasetName) {
-                    datasetToReturn = dataset
+                    datasetToReturn = dataset;
                 }
-            })
-            return datasetToReturn
+            });
+            return datasetToReturn;
         },
         getDataOfSelectedHeader() {
             let dataset = this.getselectedDataset();
@@ -235,18 +247,18 @@ export default {
             let rows;
             let dataOfSelectedHeader = [];
             this.getDatasetData({
-                _id: id
+                _id: id,
             }).then((response) => {
-                rows = response.rows
-                console.log(rows)
+                rows = response.rows;
+                console.log(rows);
                 rows.forEach((row) => {
-                    console.log(this.selectedHeader)
+                    console.log(this.selectedHeader);
                     if (row[this.selectedHeader]) {
-                        dataOfSelectedHeader.push(row[this.selectedHeader])
+                        dataOfSelectedHeader.push(row[this.selectedHeader]);
                     }
-                })
-                this.dataOfSelectedHeader = dataOfSelectedHeader
-            })
+                });
+                this.dataOfSelectedHeader = dataOfSelectedHeader;
+            });
         },
         generateFontSizeList() {
             for (let i = 10; i <= 400; i += 10) {
@@ -257,14 +269,50 @@ export default {
             }
         },
         resetData() {
-            this.selectedHeader = '';
-            this.selectedDatasetName = '';
+            this.selectedHeader = "";
+            this.selectedDatasetName = "";
             this.dataOfSelectedHeader = [];
-        }
+        },
+        InitilaizeCanvas(canvasImg) {
+            var canvas = this.canvas;
+            let vm = this;
+            fabric.Image.fromURL(canvasImg, function (img) {
+                let imgHeight = img.height;
+                let imgWidth = img.width;
+                let canvasWidth = canvas.width;
+                let canvasHeight = canvas.height;
+                let newDimensions;
+                newDimensions = vm.maintainRatio(imgHeight, imgWidth, canvasHeight, canvasWidth)
+                console.log(imgHeight, imgWidth, canvasHeight, canvasWidth);
+                console.log(newDimensions);
+                img.height = newDimensions.height;
+                img.width = newDimensions.width;
+                console.log(img);
+                canvas.setBackgroundImage(img);
+                canvas.renderAll();
+            });
+        },
+        maintainRatio(imgHeight, imgWidth, canvasHeight, canvasWidth) {
+            let widthRatio = canvasWidth / imgWidth;
+            let HeightRatio = canvasHeight / imgHeight;
+            let Ratio = widthRatio < HeightRatio ? widthRatio : HeightRatio;
+            return {
+                height: imgHeight * Ratio,
+                width: imgWidth * Ratio,
+            }
+        },
     },
-}
+};
 </script>
 <style lang="scss" scoped>
+.canvas-wrapper {
+    height: 90vh;
+    width: 80vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .builder-wrapper {
     height: 100vh;
     width: 100vw;
@@ -277,22 +325,21 @@ export default {
     padding: 1rem;
     width: 20vw;
     height: 100vh;
-    border-right: 0.01rem solid $light-two ;
+    border-right: 0.01rem solid $light-two;
 }
 
 .add-image-wrapper {
     padding: 1rem;
     width: 20vw;
     height: 100vh;
-    border-right: 0.01rem solid $light-two ;
+    border-right: 0.01rem solid $light-two;
 }
 
 .text-editor {
     padding: 2rem;
     width: 20vw;
     height: 100vh;
-    border-right: 0.01rem solid $light-two ;
-
+    border-right: 0.01rem solid $light-two;
 
     &-setfontsize {
         &-label {
@@ -303,7 +350,7 @@ export default {
     &-setalignment {
         .v-btn--icon {
             height: 2rem;
-            width: 3.5rem;
+            width: 3rem;
         }
 
         margin-bottom: 1.4rem;
