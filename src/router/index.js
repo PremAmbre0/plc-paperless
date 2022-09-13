@@ -6,18 +6,15 @@ import Dashboard from "../views/Dashboard.vue";
 import Jobs from "../views/Jobs.vue";
 import Builder from "../views/Builder.vue";
 
-
-
 Vue.use(VueRouter);
 
 const routes = [
-  { path: '/', redirect: '/templates' },
-  { path: '/dashboard', component: Dashboard },
-  { path: '/templates', component: Templates },
-  { path: '/datasets', component: Datasets },
-  { path: '/jobs', component: Jobs },
-  { path: '/builder/:id', component: Builder}
-
+  { path: "/", redirect: "/templates" },
+  { path: "/dashboard", component: Dashboard },
+  { path: "/templates", component: Templates },
+  { path: "/datasets", component: Datasets },
+  { path: "/jobs", component: Jobs },
+  { path: "/builder/:id", component: Builder },
 ];
 
 const router = new VueRouter({

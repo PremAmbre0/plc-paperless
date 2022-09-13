@@ -4,11 +4,9 @@ module.exports = {
       scss: {
         additionalData: `
         @import "~@/scss/main.scss";
-        `
-      }
+        `,
+      },
     },
   },
   transpileDependencies: ["vuetify"],
 };
-
-

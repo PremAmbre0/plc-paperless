@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 import axios from "axios";
 import templates from "./modules/templates.js";
 import datasets from "./modules/datasets.js";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 const initialState = () => ({
   loaderDialog: false,
   snackbarState: false,
@@ -18,7 +18,7 @@ const initialState = () => ({
   uploadPercentage: 0,
   showDialogForm: false,
   showOverlayLoader: false,
-  currentSection:'Templates'
+  currentSection: "Templates",
 });
 
 let apiErrorFunction = ({ err, commit, reject }) => {
@@ -109,10 +109,10 @@ export default new Vuex.Store({
         state[key] = initial[key];
       });
     },
-    setCurrentSection(state,payload){
+    setCurrentSection(state, payload) {
       state.currentSection = payload;
-      sessionStorage.setItem('currentSection', payload);
-    }
+      sessionStorage.setItem("currentSection", payload);
+    },
   },
   actions: {
     apiCallWithHeaderConfig({ commit }, { partConfig, headerConfig }) {
@@ -131,7 +131,11 @@ export default new Vuex.Store({
               },
               onUploadProgress: function (progressEvent) {
                 commit("setUploadPercentage", {
-                  uploadStatus: parseInt(Math.round((progressEvent.loaded / progressEvent.total) * 100)),
+                  uploadStatus: parseInt(
+                    Math.round(
+                      (progressEvent.loaded / progressEvent.total) * 100
+                    )
+                  ),
                 });
               },
             })
@@ -159,7 +163,9 @@ export default new Vuex.Store({
           },
           onUploadProgress: function (progressEvent) {
             commit("setUploadPercentage", {
-              uploadStatus: parseInt(Math.round((progressEvent.loaded / progressEvent.total) * 100)),
+              uploadStatus: parseInt(
+                Math.round((progressEvent.loaded / progressEvent.total) * 100)
+              ),
             });
           },
         })
@@ -176,7 +182,7 @@ export default new Vuex.Store({
     apiCall({ commit }, partConfig) {
       return new Promise((resolve, reject) => {
         // console.log(commit)
-        commit('openOverlayLoader')
+        commit("openOverlayLoader");
         this._vm.$auth
           .getTokenSilently()
           .then((token) => {
@@ -192,19 +198,16 @@ export default new Vuex.Store({
               .then((response) => {
                 let data = response.data;
                 resolve(data);
-                commit('closeOverlayLoader')
-
+                commit("closeOverlayLoader");
               })
               .catch((err) => {
-                apiErrorFunction({ err, commit, reject })
-                commit('closeOverlayLoader')
-
+                apiErrorFunction({ err, commit, reject });
+                commit("closeOverlayLoader");
               });
           })
           .catch((err) => {
             apiErrorFunction({ err, commit, reject });
-            commit('closeOverlayLoader')
-
+            commit("closeOverlayLoader");
           });
       });
     },
@@ -253,7 +256,6 @@ export default new Vuex.Store({
   },
   modules: {
     templates,
-    datasets
-  }
+    datasets,
+  },
 });
-
