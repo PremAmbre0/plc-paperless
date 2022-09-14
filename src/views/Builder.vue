@@ -275,14 +275,13 @@ export default {
         },
         InitilaizeCanvas(canvasImg) {
             var canvas = this.canvas;
-            let vm = this;
-            fabric.Image.fromURL(canvasImg, function (img) {
+            fabric.Image.fromURL(canvasImg, (img) => {
                 let imgHeight = img.height;
                 let imgWidth = img.width;
                 let canvasWidth = canvas.width;
                 let canvasHeight = canvas.height;
                 let newDimensions;
-                newDimensions = vm.maintainRatio(imgHeight, imgWidth, canvasHeight, canvasWidth)
+                newDimensions = this.maintainRatio(imgHeight, imgWidth, canvasHeight, canvasWidth)
                 console.log(imgHeight, imgWidth, canvasHeight, canvasWidth);
                 console.log(newDimensions);
                 img.height = newDimensions.height;
@@ -301,6 +300,7 @@ export default {
                 width: imgWidth * Ratio,
             }
         },
+
     },
 };
 </script>
