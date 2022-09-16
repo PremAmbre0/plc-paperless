@@ -56,20 +56,10 @@ export default {
         },
     },
     mounted() {
-        this.getTemplateData();
         this.getDatasets();
     },
     methods: {
-        ...mapActions("templates", ["getTemplateById"]),
         ...mapActions("datasets", ["getDatasetsList", "getDatasetData"]),
-        getTemplateData() {
-            this.getTemplateById({
-                id: this.$route.params.id,
-            }).then((response) => {
-                this.templateData = response.data;
-                this.InitilaizeCanvas(this.templateData.imageUrl);
-            });
-        },
         getDatasets() {
             this.getDatasetsList({}).then((data) => {
                 this.datasetsList = data.list;

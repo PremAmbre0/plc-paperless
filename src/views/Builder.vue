@@ -9,6 +9,7 @@
 
 <script>
 import { fabric } from "fabric";
+import { mapActions } from 'vuex';
 export default {
     data() {
         return {
@@ -22,10 +23,9 @@ export default {
             ],
         };
     },
-
     mounted() {
+        this.getTemplateData();
         this.canvas = new fabric.Canvas(this.$refs.canvas);
-        console.log(this.canvas);
     },
     computed: {
         canvasWidth() {
@@ -36,31 +36,40 @@ export default {
         },
     },
     methods: {
+        ...mapActions("templates", ["getTemplateById"]),
+        getTemplateData() {
+            this.getTemplateById({
+                id: this.$route.params.id,
+            }).then((response) => {
+                this.templateData = response.data;
+                this.InitilaizeCanvas(this.templateData.imageUrl);
+            });
+        },
         InitilaizeCanvas(canvasImg) {
             var canvas = this.canvas;
             fabric.Image.fromURL(canvasImg, (img) => {
-                let imgHeight = img.height;
-                let imgWidth = img.width;
-                let canvasWidth = canvas.width;
-                let canvasHeight = canvas.height;
-                let newDimensions;
-                newDimensions = this.maintainRatio(imgHeight, imgWidth, canvasHeight, canvasWidth)
-                console.log(imgHeight, imgWidth, canvasHeight, canvasWidth);
-                console.log(newDimensions);
-                img.height = newDimensions.height;
-                img.width = newDimensions.width;
-                console.log(img);
-                canvas.setBackgroundImage(img);
+                let newDimensions = this.maintainRatio(img.height, img.width, canvas.height, canvas.width)
+                console.log(img.height,img.width,newDimensions)
+                let xScale = newDimensions.width / img.width;
+                let yScale = newDimensions.height / img.height
+                let top = (canvas.height - newDimensions.height)/2
+                let left = (canvas.width - newDimensions.width)/2
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas),{
+                    top:top,
+                    left:left,
+                    scaleX:xScale,
+                    scaleY:yScale
+                });
                 canvas.renderAll();
             });
         },
         maintainRatio(imgHeight, imgWidth, canvasHeight, canvasWidth) {
             let widthRatio = canvasWidth / imgWidth;
             let HeightRatio = canvasHeight / imgHeight;
-            let Ratio = widthRatio < HeightRatio ? widthRatio : HeightRatio;
+            let ratio = widthRatio < HeightRatio ? widthRatio : HeightRatio;
             return {
-                height: imgHeight * Ratio,
-                width: imgWidth * Ratio,
+                height: Math.round(imgHeight * ratio),
+                width: Math.round(imgWidth * ratio),
             }
         },
 
