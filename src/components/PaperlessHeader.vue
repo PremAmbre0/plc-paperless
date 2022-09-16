@@ -17,23 +17,9 @@
         <v-icon>mdi-account</v-icon>
       </v-btn>
     </v-app-bar>
-    <v-toolbar
-      class="navbar"
-      flat
-      dense
-      height="10"
-      width="100%"
-      v-if="currentSection != 'Builder'"
-    >
-      <v-select
-        dense
-        hide-selected
-        v-model="selectedSection"
-        class="selectdropdown"
-        :items="sections"
-        solo
-        @change="Navigate(selectedSection)"
-      >
+    <v-toolbar class="navbar" flat dense height="10" width="100%" v-if="section != 'builder'">
+      <v-select dense hide-selected v-model="selectedSection" class="selectdropdown" :items="sections" solo
+        @change="Navigate(selectedSection)">
       </v-select>
 
       <v-spacer></v-spacer>
@@ -47,33 +33,28 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      selectedSection: "Templates",
+      selectedSection: "",
       sections: ["Templates", "Datasets", "Jobs", "Dashboard"],
     };
   },
   computed: {
-    ...mapGetters(["currentSection"]),
-  },
-  created() {
-    let section = sessionStorage.getItem("currentSection");
-    if (section) {
-      this.selectedSection = section;
-      this.setCurrentSection(section);
+    section() {
+      return this.$route.name
     }
   },
+  mounted() {
+    this.selectedSection = this.section.charAt(0).toUpperCase() + this.section.slice(1);
+  },
   methods: {
-    ...mapMutations(["setCurrentSection"]),
     async logOut() {
       this.$auth.logout({
         returnTo: window.location.origin,
       });
     },
     Navigate(section) {
-      this.setCurrentSection(section);
       if (section == "Templates") {
         this.$router.push("/templates");
       }

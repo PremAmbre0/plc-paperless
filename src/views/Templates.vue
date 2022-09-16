@@ -1,36 +1,16 @@
 <template>
   <div>
     <div class="template-container">
-      <template-cards
-        v-for="template in templatesList"
-        :key="template.createdOn"
-        :name="template.name"
-        :imageUrl="template.imageUrl"
-        :id="template._id"
-        @click.native="setSelectedTemplate(template)"
-        @deleteTemp="deleteTemp"
-        @openBuilder="openBuilder"
-      />
+      <template-cards v-for="template in templatesList" :key="template.createdOn" :name="template.name"
+        :imageUrl="template.imageUrl" :id="template._id" @click.native="setSelectedTemplate(template)"
+        @deleteTemp="deleteTemp" @openBuilder="openBuilder" />
     </div>
-    <dialog-form
-      :existingFormData="selectedTemplate"
-      @reloadData="getData"
-    ></dialog-form>
-    <v-btn
-      class="add-temp"
-      fab
-      dark
-      color="indigo"
-      @click="removeselectedTemplate()"
-    >
+    <dialog-form :existingFormData="selectedTemplate" @reloadData="getData"></dialog-form>
+    <v-btn class="add-temp" fab dark color="indigo" @click="removeselectedTemplate()">
       <v-icon dark> mdi-plus </v-icon>
     </v-btn>
     <v-overlay :value="showOverlayLoader">
-      <v-progress-circular
-        indeterminate
-        color="#5243AA"
-        size="64"
-      ></v-progress-circular>
+      <v-progress-circular indeterminate color="#5243AA" size="64"></v-progress-circular>
     </v-overlay>
   </div>
 </template>

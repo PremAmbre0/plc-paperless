@@ -41,11 +41,11 @@
               <img
                 ref="fileInput"
                 class="img"
-                v-if="currentSection == 'Templates'"
+                v-if="currentSection == 'templates'"
                 :src="existingFile ? existingFile : inputFile"
               />
               <v-data-table
-                v-if="currentSection == 'Datasets'"
+                v-if="currentSection == 'datasets'"
                 :items-per-page="5"
                 :headers="
                   existingFile ? existingFile.headers : inputFile.headers
@@ -92,28 +92,31 @@ export default {
     existingFormData: { type: Object },
   },
   computed: {
-    ...mapGetters(["showDialogForm", "currentSection"]),
+    ...mapGetters(["showDialogForm"]),
     placeholderText() {
-      if (this.currentSection == "Templates") {
+      if (this.currentSection == "templates") {
         return "Enter Your template name";
       } else {
         return "Enter Your dataset name";
       }
     },
     placeholderTitle() {
-      if (this.currentSection == "Templates") {
+      if (this.currentSection == "templates") {
         return "Template Name";
       } else {
         return "Dataset Name";
       }
     },
     overflowProperty() {
-      if (this.currentSection == "Templates") {
+      if (this.currentSection == "templates") {
         return "hidden";
       } else {
         return "scroll";
       }
     },
+    currentSection(){
+      return this.$route.name
+    }
   },
   watch: {
     showDialogForm(newValue) {
@@ -125,7 +128,7 @@ export default {
       }
       if (
         this.existingFormData.mode == "edit" &&
-        this.currentSection == "Datasets"
+        this.currentSection == "datasets"
       ) {
         this.openOverlayLoader();
         this.getDatasetData({
@@ -155,7 +158,7 @@ export default {
       this.$emit("reloadData");
     },
     submitEventHandler() {
-      if (this.currentSection == "Templates") {
+      if (this.currentSection == "templates") {
         this.postTemplate();
       } else {
         this.postDataset();
@@ -203,7 +206,7 @@ export default {
       }
     },
     filePickHandler(e) {
-      if (this.currentSection == "Templates") {
+      if (this.currentSection == "templates") {
         this.pickImageFile();
       } else {
         this.pickXLSXFile(e);

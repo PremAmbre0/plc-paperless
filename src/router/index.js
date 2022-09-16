@@ -10,11 +10,11 @@ Vue.use(VueRouter);
 
 const routes = [
   { path: "/", redirect: "/templates" },
-  { path: "/dashboard", component: Dashboard },
-  { path: "/templates", component: Templates },
-  { path: "/datasets", component: Datasets },
-  { path: "/jobs", component: Jobs },
-  { path: "/builder/:id", component: Builder },
+  { path: "/dashboard", name: "dashboard", component: Dashboard },
+  { path: "/templates", name: 'templates', component: Templates },
+  { path: "/datasets", name: 'datasets', component: Datasets },
+  { path: "/jobs", name: 'jobs', component: Jobs },
+  { path: "/builder/:id", name: 'builder', component: Builder },
 ];
 
 const router = new VueRouter({
