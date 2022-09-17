@@ -1,6 +1,6 @@
 <template>
     <div class="input-image">
-        <v-btn class="close-btn" icon  @click="$emit('closeSidepanel')">
+        <v-btn class="close-btn" icon @click="$emit('closeSidepanel')">
             <v-icon>
                 mdi-close
             </v-icon>
@@ -53,7 +53,7 @@
 
     .close-btn {
         position: absolute;
-        top:0.5rem;
+        top: 0.5rem;
         right: 0.5rem;
 
         .v-icon {

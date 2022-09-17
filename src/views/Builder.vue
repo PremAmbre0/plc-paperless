@@ -7,7 +7,7 @@
                 <div class="canvas-tools">
                     <v-btn @click="selectedTool='FontHandler'">Add Text</v-btn>
                     <v-btn @click="selectedTool='DatasetPicker'">Add Data Driven Text</v-btn>
-                    <v-btn @click="selectedTool='ImagePicker'">Add Image</v-btn>
+                    <v-btn @click="selectedTool='ImagePicker' ; pickImage()">Add Image</v-btn>
                 </div>
             </div>
             <div class="canvas-wrapper">
@@ -17,6 +17,7 @@
                 <v-btn class="canvas-submit-btn">Submit For Processing</v-btn>
             </div>
         </div>
+        <input ref="fileInput" type="file" />
     </div>
 
 </template>
@@ -27,7 +28,6 @@ import FontHandler from "../components/builder_tools/FontHandler.vue";
 import ImagePicker from "../components/builder_tools/ImagePicker.vue";
 import { fabric } from "fabric";
 import { mapActions } from "vuex";
-
 
 export default {
     data() {
@@ -89,61 +89,77 @@ export default {
                 width: Math.round(imgWidth * ratio),
             }
         },
+        pickImage() {
+            this.$refs.fileInput.click();
+        }
 
     },
 };
 </script>
 
 <style lang="scss" scoped>
-
-.canvas-outer-wrapper{
+.canvas-outer-wrapper {
     height: 100vh;
     width: 80vw;
     background-color: $white;
-    .canvas-tools-wrapper{
+
+    .canvas-tools-wrapper {
         align-items: center;
         height: 7vh;
         display: flex;
         padding: 0 3vw;
     }
-    .canvas-tools-templatename{
-        width:30vw;
+
+    .canvas-tools-templatename {
+        width: 30vw;
         display: flex;
         align-items: center;
         font-size: 1.6rem;
     }
-    .canvas-tools{
-        width:50vw;
+
+    .canvas-tools {
+        width: 50vw;
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        .v-btn{
+
+        .v-btn {
             margin-left: 1.6rem;
         }
     }
+
     .canvas-wrapper {
-    height: 75vh;
-    margin: 1rem 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+        height: 75vh;
+        margin: 1rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
-}
+
 .builder-wrapper {
     height: 100vh;
     width: 100vw;
-    background-color: rgba($tint-five,0.1);
+    background-color: rgba($tint-five, 0.1);
     position: fixed;
     display: flex;
     justify-content: center;
     margin-top: 0;
 }
-.canvas-submit{
+
+.canvas-submit {
     width: 80vw;
     display: flex;
     justify-content: flex-end;
-    &-btn{
+
+    &-btn {
         margin-right: 5vw;
     }
+}
+
+input[type="file"] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
 }
 </style>}
