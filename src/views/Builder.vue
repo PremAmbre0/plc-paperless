@@ -1,13 +1,14 @@
 <template>
     <div class="builder-wrapper">
-        <component :is="selectedTool" @closeSidepanel="selectedTool=''"></component>
+        <component :is="selectedTool" @closeSidepanel="selectedTool=''" @addDataDrivenText="addText"></component>
         <div class="canvas-outer-wrapper">
             <div class="canvas-tools-wrapper">
                 <div class="canvas-tools-templatename">Template Name :{{name}}</div>
                 <div class="canvas-tools">
-                    <v-btn @click="selectedTool='FontHandler'">Add Text</v-btn>
+                    <v-btn @click="selectedTool='FontHandler' ; addText('Tap to edit the text','normal')">Add Text
+                    </v-btn>
                     <v-btn @click="selectedTool='DatasetPicker'">Add Data Driven Text</v-btn>
-                    <v-btn @click="selectedTool='ImagePicker' ; pickImage()">Add Image</v-btn>
+                    <v-btn @click="selectedTool='ImagePicker' ; triggerFileInput()">Add Image</v-btn>
                 </div>
             </div>
             <div class="canvas-wrapper">
@@ -17,7 +18,7 @@
                 <v-btn class="canvas-submit-btn">Submit For Processing</v-btn>
             </div>
         </div>
-        <input ref="fileInput" type="file" />
+        <input ref="fileInput" type="file" @input="addImage" />
     </div>
 
 </template>
@@ -89,10 +90,35 @@ export default {
                 width: Math.round(imgWidth * ratio),
             }
         },
-        pickImage() {
+        addText(txt, type) {
+            let textAttributes = {
+                top: this.canvas.height / 2,
+                left: this.canvas.width / 2,
+                fontSize: 40,
+                fill: '#000',
+            }
+            if (type == 'normal') {
+                this.canvas.add(new fabric.IText(txt, textAttributes))
+            }
+            else {
+                this.canvas.add(new fabric.Text(txt, textAttributes))
+            }
+        },
+        triggerFileInput() {
             this.$refs.fileInput.click();
+        },
+        addImage(e) {
+            var file = e.target.files[0];
+            var reader = new FileReader();
+            reader.onload = (f) => {
+                var data = f.target.result;
+                fabric.Image.fromURL(data, (img) => {
+                    console.log(img);
+                    this.canvas.add(img).renderAll();
+                });
+            };
+            reader.readAsDataURL(file);
         }
-
     },
 };
 </script>
@@ -162,4 +188,4 @@ input[type="file"] {
     width: 0;
     visibility: hidden;
 }
-</style>}
+</style>

@@ -1,6 +1,6 @@
 <template>
     <div class="use-dataset-wrapper">
-        <v-btn class="close-btn" icon  @click="$emit('closeSidepanel')">
+        <v-btn class="close-btn" icon @click="$emit('closeSidepanel')">
             <v-icon>
                 mdi-close
             </v-icon>
@@ -11,7 +11,10 @@
             <v-select v-if="datasetHeaders.length > 0" v-model="selectedHeader" :items="datasetHeaders" outlined filled
                 label="select Header" placeholder="header">
             </v-select>
-            <v-list dense disabled v-if="dataOfSelectedHeader.length > 0" >
+            <v-btn v-if="dataOfSelectedHeader.length > 0"
+                @click="$emit('addDataDrivenText',`${selectedDatasetName}.${selectedHeader}`,'data_driven') ; resetData()">add dataset
+            </v-btn>
+            <v-list dense disabled v-if="dataOfSelectedHeader.length > 0">
                 <v-list-item-title class="text-h6">{{
                 selectedHeader
                 }}</v-list-item-title>
@@ -120,7 +123,8 @@ export default {
     border-right: 0.02rem solid $dark-one;
     position: relative;
 }
-.select-dataset{
+
+.select-dataset {
     margin-top: 3vh;
 }
 
