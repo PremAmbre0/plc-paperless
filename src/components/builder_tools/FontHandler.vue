@@ -33,13 +33,13 @@
             </div>
             <div class="text-editor-setfontstyle">
                 <div class="text-editor-setfontstyle-label">Font Style</div>
-                <v-btn icon tile small :class="{ selected: fontWeight === 'bold' }">
+                <v-btn icon tile small @click="toggleBold">
                     <v-icon small>mdi-format-bold</v-icon>
                 </v-btn>
-                <v-btn icon tile small :class="{ selected: fontStyle === 'italic' }">
+                <v-btn icon tile small @click="toggleItalic">
                     <v-icon small>mdi-format-italic</v-icon>
                 </v-btn>
-                <v-btn icon tile small :class="{ selected: underline }">
+                <v-btn icon tile small @click="toggleUnderline">
                     <v-icon small>mdi-format-underline</v-icon>
                 </v-btn>
             </div>
@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import { eventBus } from '../../EventBus';
 export default {
     data() {
         return {
@@ -125,6 +126,64 @@ export default {
     mounted() {
         this.generateFontSizeList();
     },
+    // updated() {
+    //     console.log({
+    //         fontFamily: this.fontFamily,
+    //         fontWeight: this.fontWeight,
+    //         fontStyle: this.fontStyle,
+    //         underline: this.underline,
+    //         fontSize: this.fontSize,
+    //         horizontalAlignment: this.horizontalAlignment,
+    //         color: this.color,
+    //     })
+    // },
+    watch: {
+        color(newVal) {
+            this.updateTextAttribute({
+                attributeName: 'color',
+                attributeValue: newVal
+            });
+        },
+        horizontalAlignment(newVal) {
+            this.updateTextAttribute({
+                attributeName: 'horizontalAlignment',
+                attributeValue: newVal
+            });
+        },
+        fontSize(newVal) {
+            this.updateTextAttribute({
+                attributeName: 'fontSize',
+                attributeValue: newVal
+            });
+        },
+        fontWeight(newVal) {
+            this.updateTextAttribute({
+                attributeName: 'fontWeight',
+                attributeValue: newVal
+            });
+        },
+        fontStyle(newVal) {
+            this.updateTextAttribute({
+                attributeName: 'fontStyle',
+                attributeValue: newVal
+            });
+        },
+        underline(newVal) {
+            this.updateTextAttribute({
+                attributeName: 'underline',
+                attributeValue: newVal
+            });
+        },
+        fontFamily(newVal) {
+            console.log(newVal)
+            let fontFamilyObject = this.fontFamilyList.find( obj => obj.value == newVal)
+            console.log(fontFamilyObject)
+            this.updateTextAttribute({
+                attributeName: 'fontFamily',
+                attributeValue: fontFamilyObject.text
+            });
+        },
+    },
     methods: {
         generateFontSizeList() {
             for (let i = 10; i <= 400; i += 10) {
@@ -134,6 +193,30 @@ export default {
                 });
             }
         },
+        updateTextAttribute(data) {
+            eventBus.$emit('updateTextAttribute', data)
+        },
+        toggleBold() {
+            if (this.fontWeight == 'normal') {
+                this.fontWeight = 'bold';
+            } else {
+                this.fontWeight = 'normal';
+            }
+        },
+        toggleItalic() {
+            if (this.fontStyle == 'normal') {
+                this.fontStyle = 'italic';
+            } else {
+                this.fontStyle = 'normal';
+            }
+        },
+        toggleUnderline() {
+            if (this.underline) {
+                this.underline = false;
+            } else {
+                this.underline = true;
+            }
+        }
     }
 }
 
