@@ -19,22 +19,22 @@ const initializeCanvas = {
             this.canvasObject.setWidth(newDimensions.width);
             this.canvasObject.renderAll();
         });
+        this.initialiseFabricListners();
     },
-    // initialiseFabricListners() {
-    // 	this.canvasObject.on("mouse:down", () => {
-    // 		const activeObject = this.canvasObject.getActiveObject();
-    // 		if (activeObject && activeObject.id !== this.activeCanvasObject.id) {
-    // 			this.activeCanvasObject = activeObject;
-    // 			this.onObjectSelected(this.getObjectAttributesFromType(activeObject));
-    // 		} else if (!activeObject && Object.keys(this.activeCanvasObject).length) {
-    // 			this.activeCanvasObject = {};
-    // 			this.onObjectDeSelected();
-    // 		}
-    // 	});
-    // 	this.canvasObject.on("object:added", () => {
-    // 		this.onObjectAddOnCanvas(this.canvasObject.getObjects().length);
-    // 	});
-    // },
+    initialiseFabricListners() {
+        this.canvasObject.on("selection:created", () => {
+            this.activeCanvasObject = this.canvasObject.getActiveObject()
+            console.log(this.activeCanvasObject);
+        });
+        this.canvasObject.on("selection:updated", () => {
+            this.activeCanvasObject = this.canvasObject.getActiveObject()
+
+        });
+        this.canvasObject.on("selection:cleared", () => {
+            this.activeCanvasObject = {}
+
+        });
+    }
 }
 
 
