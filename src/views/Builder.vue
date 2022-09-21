@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="canvas-wrapper">
-                <canvas ref="canvas" id="canvas" :height="canvasHeight" :width="canvasWidth"></canvas>
+                <main-canvas v-if="isFetching" :templateData="templateData" :canvasWidth="canvasWidth" :canvasHeight="canvasHeight"></main-canvas>
             </div>
             <div class="canvas-submit">
                 <v-btn class="canvas-submit-btn">Submit For Processing</v-btn>
@@ -27,7 +27,9 @@
 import DatasetPicker from "../components/builder_tools/DatasetPicker.vue";
 import FontHandler from "../components/builder_tools/FontHandler.vue";
 import ImagePicker from "../components/builder_tools/ImagePicker.vue";
+import MainCanvas from "../components/MainCanvas.vue";
 import { fabric } from "fabric";
+// import { EventBus } from "../EventBus";
 import { mapActions } from "vuex";
 
 export default {
@@ -37,18 +39,18 @@ export default {
             selectedTool: "FontHandler",
             templateData: null,
             name: "",
+            isFetching: false,
         };
     },
     components: {
-        DatasetPicker, FontHandler, ImagePicker,
+        DatasetPicker, FontHandler, ImagePicker, MainCanvas
     },
-    mounted() {
+    beforeMount() {
         this.getTemplateData();
-        this.canvas = new fabric.Canvas(this.$refs.canvas);
     },
     computed: {
         canvasWidth() {
-            return (window.outerWidth / 100) * 70;
+            return (window.outerWidth / 100) * 80;
         },
         canvasHeight() {
             return (window.outerHeight / 100) * 75;
@@ -61,37 +63,17 @@ export default {
                 id: this.$route.params.id,
             }).then((response) => {
                 this.templateData = response.data;
-                this.name = response.data.name
-                this.InitilaizeCanvas(this.templateData.imageUrl);
+                this.name = response.data.name;
+                this.isFetching = true;
             });
         },
-        InitilaizeCanvas(canvasImg) {
-            var canvas = this.canvas;
-            fabric.Image.fromURL(canvasImg, (img) => {
-                console.log(canvas.height, canvas.width)
-                let newDimensions = this.maintainRatio(img.height, img.width, canvas.height, canvas.width)
-                let xScale = newDimensions.width / img.width;
-                let yScale = newDimensions.height / img.height
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                    scaleX: xScale,
-                    scaleY: yScale
-                })
-                canvas.setHeight(newDimensions.height)
-                canvas.setWidth(newDimensions.width);
-                canvas.renderAll();
-            });
-        },
-        maintainRatio(imgHeight, imgWidth, canvasHeight, canvasWidth) {
-            let widthRatio = canvasWidth / imgWidth;
-            let HeightRatio = canvasHeight / imgHeight;
-            let ratio = widthRatio < HeightRatio ? widthRatio : HeightRatio;
-            return {
-                height: Math.round(imgHeight * ratio),
-                width: Math.round(imgWidth * ratio),
-            }
+        triggerFileInput() {
+            this.$refs.fileInput.click();
         },
         addText(txt, type) {
+            let _id = this.generateUniqueId();
             let textAttributes = {
+                _id: _id,
                 top: this.canvas.height / 2,
                 left: this.canvas.width / 2,
                 fontSize: 40,
@@ -103,18 +85,28 @@ export default {
             else {
                 this.canvas.add(new fabric.Text(txt, textAttributes))
             }
-        },
-        triggerFileInput() {
-            this.$refs.fileInput.click();
+            this.canvas.renderAll();
         },
         addImage(e) {
             var file = e.target.files[0];
             var reader = new FileReader();
             reader.onload = (f) => {
                 var data = f.target.result;
+                console.log(data)
+                let _id = this.generateUniqueId();
                 fabric.Image.fromURL(data, (img) => {
-                    console.log(img);
-                    this.canvas.add(img).renderAll();
+                    let newDimensions = this.maintainRatio(img.height, img.width, this.canvas.height / 2, this.canvas.width / 2)
+                    let xScale = newDimensions.width / img.width;
+                    let yScale = newDimensions.height / img.height
+                    img.set({
+                        _id: _id,
+                        top: (this.canvas.height - newDimensions.height) / 2,
+                        left: (this.canvas.width - newDimensions.width) / 2,
+                        angle: 0,
+                        scaleX: xScale,
+                        scaleY: yScale,
+                    })
+                    this.canvas.add(img,).renderAll();
                 });
             };
             reader.readAsDataURL(file);
