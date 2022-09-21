@@ -8,7 +8,7 @@
                     <v-btn @click="selectedTool='FontHandler' ; addText('Tap to edit the text','normal')">Add Text
                     </v-btn>
                     <v-btn @click="selectedTool='DatasetPicker'">Add Data Driven Text</v-btn>
-                    <v-btn @click="selectedTool='ImagePicker' ; triggerFileInput()">Add Image</v-btn>
+                    <v-btn @click="selectedTool='ImagePicker' ; triggerFileInput() ">Add Image</v-btn>
                 </div>
             </div>
             <div class="canvas-wrapper">
@@ -28,8 +28,7 @@ import DatasetPicker from "../components/builder_tools/DatasetPicker.vue";
 import FontHandler from "../components/builder_tools/FontHandler.vue";
 import ImagePicker from "../components/builder_tools/ImagePicker.vue";
 import MainCanvas from "../components/MainCanvas.vue";
-import { fabric } from "fabric";
-// import { EventBus } from "../EventBus";
+import { eventBus } from "../EventBus";
 import { mapActions } from "vuex";
 
 export default {
@@ -70,46 +69,12 @@ export default {
         triggerFileInput() {
             this.$refs.fileInput.click();
         },
-        addText(txt, type) {
-            let _id = this.generateUniqueId();
-            let textAttributes = {
-                _id: _id,
-                top: this.canvas.height / 2,
-                left: this.canvas.width / 2,
-                fontSize: 40,
-                fill: '#000',
-            }
-            if (type == 'normal') {
-                this.canvas.add(new fabric.IText(txt, textAttributes))
-            }
-            else {
-                this.canvas.add(new fabric.Text(txt, textAttributes))
-            }
-            this.canvas.renderAll();
+        addText(txt,type){
+            eventBus.$emit('addText',txt,type);
         },
-        addImage(e) {
-            var file = e.target.files[0];
-            var reader = new FileReader();
-            reader.onload = (f) => {
-                var data = f.target.result;
-                console.log(data)
-                let _id = this.generateUniqueId();
-                fabric.Image.fromURL(data, (img) => {
-                    let newDimensions = this.maintainRatio(img.height, img.width, this.canvas.height / 2, this.canvas.width / 2)
-                    let xScale = newDimensions.width / img.width;
-                    let yScale = newDimensions.height / img.height
-                    img.set({
-                        _id: _id,
-                        top: (this.canvas.height - newDimensions.height) / 2,
-                        left: (this.canvas.width - newDimensions.width) / 2,
-                        angle: 0,
-                        scaleX: xScale,
-                        scaleY: yScale,
-                    })
-                    this.canvas.add(img,).renderAll();
-                });
-            };
-            reader.readAsDataURL(file);
+        addImage(e){
+            console.log(e)
+            eventBus.$emit('addImage',e);
         }
     },
 };

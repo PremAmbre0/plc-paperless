@@ -1,5 +1,7 @@
 // import { fabric } from "fabric";
 import initializeCanvas from "./initializeCanvas";
+import textInput from "./textInput";
+import imageImput from "./imageInput";
 
 class CanvasInterface {
     constructor({canvasImageUrl, canvas,initialCanvasHeight,initialCanvasWidth}) {
@@ -29,7 +31,9 @@ class CanvasInterface {
 }
 
 Object.assign(CanvasInterface.prototype, {
-    ...initializeCanvas
+    ...initializeCanvas,
+    ...textInput,
+    ...imageImput,
 });
 
 export default CanvasInterface;

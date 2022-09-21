@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import axios from "axios";
 import templates from "./modules/templates.js";
 import datasets from "./modules/datasets.js";
+import builder from "./modules/builder.js";
 
 Vue.use(Vuex);
 const initialState = () => ({
@@ -251,5 +252,6 @@ export default new Vuex.Store({
   modules: {
     templates,
     datasets,
+    builder,
   },
 });
