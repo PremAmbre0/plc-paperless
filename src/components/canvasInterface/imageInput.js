@@ -14,7 +14,7 @@ const imageImput = {
                 let yScale = newDimensions.height / img.height
                 img.set({
                     _id: _id,
-                    type:'image',
+                    type: 'image',
                     top: (this.canvasObject.height - newDimensions.height) / 2,
                     left: (this.canvasObject.width - newDimensions.width) / 2,
                     angle: 0,
@@ -25,7 +25,10 @@ const imageImput = {
             });
         };
         reader.readAsDataURL(file);
-
+    },
+    handleImageOpacity(data) {
+        this.activeCanvasObject.set("opacity", data);
+        this.canvasObject.renderAll();
     }
 }
 

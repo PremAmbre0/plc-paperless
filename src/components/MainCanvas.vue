@@ -44,6 +44,9 @@ export default {
             eventBus.$on('updateTextAttribute', (data) => {
                 this.canvas.handleTextUpdate(data);
             })
+            eventBus.$on('updateImageOpacity', (data) => {
+                this.canvas.handleImageOpacity(data);
+            });
         }
     },
 };
