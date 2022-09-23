@@ -79,7 +79,6 @@ export default {
         getselectedDataset() {
             let datasetToReturn;
             this.datasetsList.forEach((dataset) => {
-                console.log(this.selectedDatasetName);
                 if (dataset.name == this.selectedDatasetName) {
                     datasetToReturn = dataset;
                 }
@@ -95,9 +94,7 @@ export default {
                 _id: id,
             }).then((response) => {
                 rows = response.rows;
-                console.log(rows);
                 rows.forEach((row) => {
-                    console.log(this.selectedHeader);
                     if (row[this.selectedHeader]) {
                         dataOfSelectedHeader.push(row[this.selectedHeader]);
                     }

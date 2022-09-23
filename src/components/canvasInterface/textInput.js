@@ -2,9 +2,9 @@ import { fabric } from "fabric";
 
 const textInput = {
     addText(txt, type) {
-        let _id = this.generateUniqueId();
+        let id = this.generateUniqueId();
         let textAttributes = {
-            _id: _id,
+            id: id,
             top: this.canvasObject.height / 2,
             left: this.canvasObject.width / 2,
             fontSize: 40,
@@ -21,6 +21,7 @@ const textInput = {
                 ...textAttributes
             }))
         }
+        this.canvasObject.setActiveObject(this.activeCanvasObject);
         this.canvasObject.renderAll();
     },
     handleTextUpdate(data) {

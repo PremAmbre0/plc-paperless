@@ -22,6 +22,22 @@ export default {
     created() {
         this.initializeListeners();
     },
+    computed: {
+        currentFabricObject() {
+            return this.canvas.activeCanvasObject
+        }
+    },
+    watch: {
+        currentFabricObject(newValue) {
+            if (newValue.type == "normal" || newValue.type == "data_driven") {
+                this.$emit('openTextEditor')
+            } else if (newValue.type == "image") {
+                this.$emit('openImageEditor')
+            } else {
+                this.$emit("closeEditor") 
+            }
+        }
+    },
     mounted() {
         if (this.templateData) {
             this.canvas = new CanvasInterface({

@@ -116,7 +116,7 @@ export default {
             horizontalAlignment: 0,
             color: "#000",
             menu: false,
-            fontSize: 48,
+            fontSize: 40,
             fontFamily: "Arial, Helvetica, sans-serif",
             fontWeight: "normal",
             fontStyle: "normal",

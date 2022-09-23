@@ -6,14 +6,13 @@ const imageImput = {
         var reader = new FileReader();
         reader.onload = (f) => {
             var data = f.target.result;
-            console.log(data)
-            let _id = this.generateUniqueId();
+            let id = this.generateUniqueId();
             fabric.Image.fromURL(data, (img) => {
                 let newDimensions = this.getMaintainedAspectRatio(img.height, img.width, this.canvasObject.height / 2, this.canvasObject.width / 2)
                 let xScale = newDimensions.width / img.width;
                 let yScale = newDimensions.height / img.height
                 img.set({
-                    _id: _id,
+                    id: id,
                     type: 'image',
                     top: (this.canvasObject.height - newDimensions.height) / 2,
                     left: (this.canvasObject.width - newDimensions.width) / 2,
@@ -21,7 +20,9 @@ const imageImput = {
                     scaleX: xScale,
                     scaleY: yScale,
                 })
-                this.canvasObject.add(img,).renderAll();
+                this.canvasObject.add(img,);
+                this.canvasObject.setActiveObject(this.activeCanvasObject);
+                this.canvasObject.renderAll();
             });
         };
         reader.readAsDataURL(file);

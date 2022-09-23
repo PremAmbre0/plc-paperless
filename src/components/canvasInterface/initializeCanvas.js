@@ -24,8 +24,7 @@ const initializeCanvas = {
     initialiseFabricListners() {
         this.canvasObject.on("selection:created", () => {
             this.activeCanvasObject = this.canvasObject.getActiveObject()
-            console.log(this.activeCanvasObject);
-        });
+        }); 
         this.canvasObject.on("selection:updated", () => {
             this.activeCanvasObject = this.canvasObject.getActiveObject()
 
@@ -33,6 +32,12 @@ const initializeCanvas = {
         this.canvasObject.on("selection:cleared", () => {
             this.activeCanvasObject = {}
 
+        });
+        this.canvasObject.on("object:added", () => {
+            let canvasObjs = this.canvasObject.getObjects()
+            let lastIndex = canvasObjs.length - 1
+            this.allFabricObjects.push(canvasObjs[lastIndex]);
+            this.activeCanvasObject = canvasObjs[lastIndex];
         });
     }
 }

@@ -2,21 +2,20 @@
 import initializeCanvas from "./initializeCanvas";
 import textInput from "./textInput";
 import imageImput from "./imageInput";
+import { v4 as uuidv4 } from 'uuid';
 
 class CanvasInterface {
-    constructor({canvasImageUrl, canvas,initialCanvasHeight,initialCanvasWidth}) {
+    constructor({ canvasImageUrl, canvas, initialCanvasHeight, initialCanvasWidth }) {
         this.canvasImageUrl = canvasImageUrl;
         this.canvas = canvas;
         this.initialCanvasHeight = initialCanvasHeight;
         this.initialCanvasWidth = initialCanvasWidth;
-        this.canvasObject = {}
+        this.canvasObject = {};
+        this.allFabricObjects=[];
         this.activeCanvasObject = {};
 
         this.generateUniqueId = () => {
-            var arr = new Uint8Array(20);
-            window.crypto.getRandomValues(arr);
-            let dec2hex = (arr) => arr.toString(16).padStart(2, '0');
-            return Array.from(arr, dec2hex).join('')
+            return uuidv4();
         };
         this.getMaintainedAspectRatio = (imgHeight, imgWidth, canvasHeight, canvasWidth) => {
             let widthRatio = canvasWidth / imgWidth;

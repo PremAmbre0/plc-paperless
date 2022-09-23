@@ -5,14 +5,14 @@
             <div class="canvas-tools-wrapper">
                 <div class="canvas-tools-templatename">Template Name :{{name}}</div>
                 <div class="canvas-tools">
-                    <v-btn @click="selectedTool='FontHandler' ; addText('Tap to edit the text','normal')">Add Text
+                    <v-btn @click="addText('Tap to edit the text','normal')">Add Text
                     </v-btn>
                     <v-btn @click="selectedTool='DatasetPicker'">Add Data Driven Text</v-btn>
-                    <v-btn @click="selectedTool='ImagePicker' ; triggerFileInput() ">Add Image</v-btn>
+                    <v-btn @click="triggerFileInput() ">Add Image</v-btn>
                 </div>
             </div>
             <div class="canvas-wrapper">
-                <main-canvas v-if="isFetching" :templateData="templateData" :canvasWidth="canvasWidth" :canvasHeight="canvasHeight"></main-canvas>
+                <main-canvas v-if="isFetching" :templateData="templateData" :canvasWidth="canvasWidth" :canvasHeight="canvasHeight" @openTextEditor="openTextEditor" @openImageEditor="openImageEditor" @closeEditor="closeEditor"></main-canvas>
             </div>
             <div class="canvas-submit">
                 <v-btn class="canvas-submit-btn">Submit For Processing</v-btn>
@@ -35,7 +35,7 @@ export default {
     data() {
         return {
             canvas: null,
-            selectedTool: "FontHandler",
+            selectedTool:"",
             templateData: null,
             name: "",
             isFetching: false,
@@ -75,6 +75,15 @@ export default {
         addImage(e){
             console.log(e)
             eventBus.$emit('addImage',e);
+        },
+        openTextEditor(){
+            this.selectedTool = "FontHandler";
+        },
+        openImageEditor(){
+            this.selectedTool = "ImagePicker";
+        },
+        closeEditor(){
+            this.selectedTool = "";
         }
     },
 };
