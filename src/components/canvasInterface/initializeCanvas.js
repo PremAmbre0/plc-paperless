@@ -27,7 +27,6 @@ const initializeCanvas = {
         }); 
         this.canvasObject.on("selection:updated", () => {
             this.activeCanvasObject = this.canvasObject.getActiveObject()
-
         });
         this.canvasObject.on("selection:cleared", () => {
             this.activeCanvasObject = {}

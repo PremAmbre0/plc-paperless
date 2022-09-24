@@ -7,6 +7,7 @@
 <script>
 import { eventBus } from "@/EventBus";
 import CanvasInterface from "./canvasInterface/canvasInterface";
+import { mapActions } from "vuex";
 
 export default {
     data() {
@@ -29,12 +30,12 @@ export default {
     },
     watch: {
         currentFabricObject(newValue) {
-            if (newValue.type == "normal" || newValue.type == "data_driven") {
+            if (newValue.type == "staticText" || newValue.type == "fromDataset") {
                 this.$emit('openTextEditor')
             } else if (newValue.type == "image") {
                 this.$emit('openImageEditor')
             } else {
-                this.$emit("closeEditor") 
+                this.$emit("closeEditor")
             }
         }
     },
@@ -50,9 +51,10 @@ export default {
         }
     },
     methods: {
+        ...mapActions("builder", ["submitJob"]),
         initializeListeners() {
-            eventBus.$on('addText', (txt, type) => {
-                this.canvas.addText(txt, type);
+            eventBus.$on('addText', (payload) => {
+                this.canvas.addText(payload);
             });
             eventBus.$on('addImage', (e) => {
                 this.canvas.addImage(e);
@@ -63,7 +65,58 @@ export default {
             eventBus.$on('updateImageOpacity', (data) => {
                 this.canvas.handleImageOpacity(data);
             });
-        }
+            eventBus.$on('submitForProcessing', () => {
+                let AFO = this.canvas.allFabricObjects;
+                let dataConfig = [];
+                AFO.forEach((obj) => {
+                    let style = {};
+                    let imagePayload = {};
+                    if (obj.type == "staticText" || obj.type == "fromDataset") {
+                        style = this.canvas.getStyles(obj)
+                    } else {
+                        imagePayload = this.canvas.getImagePaylaod(obj);
+                    }
+                    let position = this.canvas.getPosition(obj);
+                    switch (obj.type) {
+                        case "staticText": {
+                            dataConfig.push({
+                                "type": obj.type,
+                                "text": obj.txt,
+                                "position": position,
+                                "style": style,
+                            });
+                            break;
+                        }
+                        case "fromDataset": {
+                            dataConfig.push({
+                                "type": obj.type,
+                                "datasetId": obj.datasetId,
+                                "dataField": obj.dataField,
+                                "position": position,
+                                "style": style,
+                            });
+                            break;
+                        }
+                        case "image": {
+                            dataConfig.push({
+                                "type": obj.type,
+                                ...imagePayload
+                            })
+                            break;
+                        }
+                    }
+                });
+                
+                console.log({
+                    templateId : this.templateData._id,
+                    dataConfig
+                })
+                // this.submitJob(dataConfig)
+                // .then((response) => {
+                //     console.log(response)
+                // });
+            })
+        },
     },
 };
 </script>

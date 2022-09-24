@@ -5,7 +5,7 @@
             <div class="canvas-tools-wrapper">
                 <div class="canvas-tools-templatename">Template Name :{{name}}</div>
                 <div class="canvas-tools">
-                    <v-btn @click="addText('Tap to edit the text','normal')">Add Text
+                    <v-btn @click="addText({'type':'staticText','txt':'double tab to edit the text'})">Add Text
                     </v-btn>
                     <v-btn @click="selectedTool='DatasetPicker'">Add Data Driven Text</v-btn>
                     <v-btn @click="triggerFileInput() ">Add Image</v-btn>
@@ -15,7 +15,7 @@
                 <main-canvas v-if="isFetching" :templateData="templateData" :canvasWidth="canvasWidth" :canvasHeight="canvasHeight" @openTextEditor="openTextEditor" @openImageEditor="openImageEditor" @closeEditor="closeEditor"></main-canvas>
             </div>
             <div class="canvas-submit">
-                <v-btn class="canvas-submit-btn">Submit For Processing</v-btn>
+                <v-btn class="canvas-submit-btn" @click="submitForProcessing">Submit For Processing</v-btn>
             </div>
         </div>
         <input ref="fileInput" type="file" @input="addImage" />
@@ -69,11 +69,13 @@ export default {
         triggerFileInput() {
             this.$refs.fileInput.click();
         },
-        addText(txt,type){
-            eventBus.$emit('addText',txt,type);
+        addText(paylaod){
+            eventBus.$emit('addText',paylaod);
+        },
+        submitForProcessing(){
+            eventBus.$emit('submitForProcessing');
         },
         addImage(e){
-            console.log(e)
             eventBus.$emit('addImage',e);
         },
         openTextEditor(){

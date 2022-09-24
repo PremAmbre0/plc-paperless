@@ -1,23 +1,24 @@
 import { fabric } from "fabric";
 
 const textInput = {
-    addText(txt, type) {
+    addText(payload) {
         let id = this.generateUniqueId();
         let textAttributes = {
             id: id,
             top: this.canvasObject.height / 2,
             left: this.canvasObject.width / 2,
             fontSize: 40,
+            fontFamily:"Arial, Helvetica, sans-serif",
         }
-        if (type == 'normal') {
-            this.canvasObject.add(new fabric.IText(txt, {
-                type,
+        if (payload.type == 'staticText') {
+            this.canvasObject.add(new fabric.IText(payload.txt, {
+                ...payload,
                 ...textAttributes
             }))
         }
         else {
-            this.canvasObject.add(new fabric.Text(txt, {
-                type,
+            this.canvasObject.add(new fabric.Text(payload.txt, {
+                ...payload,
                 ...textAttributes
             }))
         }
@@ -58,7 +59,6 @@ const textInput = {
                 break;
             }
             case "fontFamily": {
-                console.log(data)
                 this.activeCanvasObject.set("fontFamily", data.attributeValue);
                this.canvasObject.renderAll();
                 break;

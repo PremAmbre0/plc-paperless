@@ -11,8 +11,8 @@
             <v-select v-if="datasetHeaders.length > 0" v-model="selectedHeader" :items="datasetHeaders" outlined filled
                 label="select Header" placeholder="header">
             </v-select>
-            <v-btn v-if="dataOfSelectedHeader.length > 0"
-                @click="$emit('addDataDrivenText',`${selectedDatasetName}.${selectedHeader}`,'data_driven') ; resetData()">add dataset
+            <v-btn v-if="dataOfSelectedHeader.length > 0" @click="addDataDrivenText() ; resetData()">add
+                dataset
             </v-btn>
             <v-list dense disabled v-if="dataOfSelectedHeader.length > 0">
                 <v-list-item-title class="text-h6">{{
@@ -39,6 +39,7 @@ export default {
             selectedDatasetName: "",
             selectedHeader: "",
             dataOfSelectedHeader: [],
+            datasetId: "",
         }
     },
     computed: {
@@ -88,6 +89,7 @@ export default {
         getDataOfSelectedHeader() {
             let dataset = this.getselectedDataset();
             let id = dataset._id;
+            this.datasetId = id;
             let rows;
             let dataOfSelectedHeader = [];
             this.getDatasetData({
@@ -107,6 +109,16 @@ export default {
             this.selectedDatasetName = "";
             this.dataOfSelectedHeader = [];
         },
+        addDataDrivenText() {
+            let payload = {
+                'datasetId': this.datasetId,
+                'dataField': this.selectedHeader,
+                'type': "fromDataset",
+                'txt': `${this.selectedDatasetName}.${this.selectedHeader}`,
+            }
+            this.$emit('addDataDrivenText',payload)
+
+        }
     }
 }
 

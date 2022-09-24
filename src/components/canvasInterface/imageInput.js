@@ -14,6 +14,7 @@ const imageImput = {
                 img.set({
                     id: id,
                     type: 'image',
+                    url:data,
                     top: (this.canvasObject.height - newDimensions.height) / 2,
                     left: (this.canvasObject.width - newDimensions.width) / 2,
                     angle: 0,

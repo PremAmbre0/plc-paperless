@@ -50,7 +50,7 @@
                             label="color">
                         </v-text-field>
                     </template>
-                    <v-color-picker v-model="color" flat />
+                    <v-color-picker v-model="color" flat mode="hexa" />
                 </v-menu>
             </div>
         </div>
@@ -126,17 +126,6 @@ export default {
     mounted() {
         this.generateFontSizeList();
     },
-    // updated() {
-    //     console.log({
-    //         fontFamily: this.fontFamily,
-    //         fontWeight: this.fontWeight,
-    //         fontStyle: this.fontStyle,
-    //         underline: this.underline,
-    //         fontSize: this.fontSize,
-    //         horizontalAlignment: this.horizontalAlignment,
-    //         color: this.color,
-    //     })
-    // },
     watch: {
         color(newVal) {
             this.updateTextAttribute({
@@ -176,7 +165,7 @@ export default {
         },
         fontFamily(newVal) {
             console.log(newVal)
-            let fontFamilyObject = this.fontFamilyList.find( obj => obj.value == newVal)
+            let fontFamilyObject = this.fontFamilyList.find(obj => obj.value == newVal)
             console.log(fontFamilyObject)
             this.updateTextAttribute({
                 attributeName: 'fontFamily',
