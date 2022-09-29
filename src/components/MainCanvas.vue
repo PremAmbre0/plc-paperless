@@ -106,15 +106,14 @@ export default {
                         }
                     }
                 });
-                
-                console.log({
-                    templateId : this.templateData._id,
+
+                this.submitJob({
+                    templateId: this.templateData._id,
                     dataConfig
                 })
-                // this.submitJob(dataConfig)
-                // .then((response) => {
-                //     console.log(response)
-                // });
+                    .then((response) => {
+                        console.log(response)
+                    });
             })
         },
     },

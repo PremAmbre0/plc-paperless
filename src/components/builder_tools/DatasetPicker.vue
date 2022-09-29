@@ -78,12 +78,13 @@ export default {
             });
         },
         getselectedDataset() {
-            let datasetToReturn;
+            let datasetToReturn = null;
             this.datasetsList.forEach((dataset) => {
                 if (dataset.name == this.selectedDatasetName) {
                     datasetToReturn = dataset;
                 }
             });
+            console.log(datasetToReturn)
             return datasetToReturn;
         },
         getDataOfSelectedHeader() {
@@ -116,7 +117,7 @@ export default {
                 'type': "fromDataset",
                 'txt': `${this.selectedDatasetName}.${this.selectedHeader}`,
             }
-            this.$emit('addDataDrivenText',payload)
+            this.$emit('addDataDrivenText', payload)
 
         }
     }

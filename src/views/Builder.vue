@@ -3,7 +3,7 @@
         <component :is="selectedTool" @closeSidepanel="selectedTool=''" @addDataDrivenText="addText"></component>
         <div class="canvas-outer-wrapper">
             <div class="canvas-tools-wrapper">
-                <div class="canvas-tools-templatename">Template Name :{{name}}</div>
+                <div class="canvas-tools-templatename">{{name}}</div>
                 <div class="canvas-tools">
                     <v-btn @click="addText({'type':'staticText','txt':'double tab to edit the text'})">Add Text
                     </v-btn>

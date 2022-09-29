@@ -12,7 +12,6 @@
                 </v-select>
             </div>
             <div class="text-editor-setfontsize">
-                <div class="text-editor-setfontsize-label">Set Font Size</div>
                 <v-select v-model="fontSize" :items="fontSizeList" item-text="text" item-value="value" dense outlined
                     label="Font Size" placeholder="Select fontsize-">
                 </v-select>
@@ -32,7 +31,6 @@
                 </v-btn-toggle>
             </div>
             <div class="text-editor-setfontstyle">
-                <div class="text-editor-setfontstyle-label">Font Style</div>
                 <v-btn icon tile small @click="toggleBold">
                     <v-icon small>mdi-format-bold</v-icon>
                 </v-btn>

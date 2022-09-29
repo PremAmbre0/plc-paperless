@@ -16,8 +16,10 @@ export default {
     },
     actions: {
         submitJob: ({ commit, dispatch }, payload) => {
+            console.log(payload)
             let form = new FormData();
             form.append("payload", JSON.stringify(payload));
+            console.log(...form)
             let fail = (msg) => commit("failure", msg);
             return dispatch(
                 "apiCall",
