@@ -95,7 +95,6 @@ export default {
 .canvas-outer-wrapper {
     height: 100vh;
     width: 80vw;
-    background-color: $white;
 
     .canvas-tools-wrapper {
         align-items: center;
@@ -109,6 +108,8 @@ export default {
         display: flex;
         align-items: center;
         font-size: 1.6rem;
+        font-weight: 900;
+        text-transform: capitalize;
     }
 
     .canvas-tools {
