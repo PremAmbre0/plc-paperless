@@ -120,6 +120,8 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.canvas-container-wrapper{
+    box-shadow: 0.4rem 0.4rem 2rem 0.5rem rgba($black,0.3);
+}
 </style>
