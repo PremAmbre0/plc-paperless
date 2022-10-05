@@ -34,7 +34,7 @@ const initializeCanvas = {
         });
         this.canvasObject.on("object:added", (e) => {
             let canvasObjs = this.canvasObject.getObjects()
-            console.log(e)
+            console.log(e.target)
             let lastIndex = canvasObjs.length - 1
             this.allFabricObjects.push(canvasObjs[lastIndex]);
             this.activeCanvasObject = canvasObjs[lastIndex];

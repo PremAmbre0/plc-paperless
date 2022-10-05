@@ -1,10 +1,5 @@
 <template>
     <div class="input-image">
-        <v-btn class="close-btn" icon @click="$emit('closeSidepanel')">
-            <v-icon>
-                mdi-close
-            </v-icon>
-        </v-btn>
         <div class="image-opacity">
             <div class="image-opacity-input">
                 <v-btn icon @click="decrementOpacity">
@@ -55,11 +50,8 @@ export default{
 
 <style lang="scss" scoped>
 .input-image {
-    padding: 1rem;
-    width: 20vw;
+    width: 100%;
     height: 100vh;
-    border-right: 0.02rem solid $dark-one;
-    position: relative;
 
     .image-opacity {
         margin-top: 3vh;
@@ -79,17 +71,6 @@ export default{
                 font-size: 2rem;
             }
         }
-    }
-
-    .close-btn {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-
-        .v-icon {
-            font-size: 2rem;
-        }
-
     }
 }
 </style>

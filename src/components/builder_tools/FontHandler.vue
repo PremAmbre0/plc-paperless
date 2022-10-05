@@ -1,10 +1,5 @@
 <template>
     <div class="text-editor-wrapper">
-        <v-btn class="close-btn" icon @click="$emit('closeSidepanel')">
-            <v-icon>
-                mdi-close
-            </v-icon>
-        </v-btn>
         <div class="text-editor">
             <div class="text-editor-setfont">
                 <v-select v-model="fontFamily" :items="fontFamilyList" item-text="text" item-value="value" dense
@@ -211,11 +206,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .text-editor-wrapper {
-    padding: 2rem;
-    width: 20vw;
+    width: 100%;
     height: 100vh;
-    border-right: 0.02rem solid $dark-one;
-    position: relative;
 }
 
 .text-editor {
@@ -249,14 +241,4 @@ export default {
     }
 }
 
-.close-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-
-    .v-icon {
-        font-size: 2rem;
-    }
-
-}
 </style>

@@ -30,12 +30,12 @@ export default {
     },
     watch: {
         currentFabricObject(newValue) {
-            if (newValue.type == "staticText" || newValue.type == "fromDataset") {
-                this.$emit('openTextEditor')
+            if (newValue.type == "staticText") {
+                eventBus.$emit('openTextEditor')
             } else if (newValue.type == "image") {
-                this.$emit('openImageEditor')
+                eventBus.$emit('openImageEditor')
             } else {
-                this.$emit("closeEditor")
+                eventBus.$emit("closeEditor")
             }
         }
     },
@@ -67,6 +67,7 @@ export default {
             });
             eventBus.$on('submitForProcessing', () => {
                 let AFO = this.canvas.allFabricObjects;
+                //  AFO = Array OF Objects
                 let dataConfig = [];
                 AFO.forEach((obj) => {
                     let style = {};
@@ -115,13 +116,13 @@ export default {
                         console.log(response)
                     });
             })
-        },
+        },   
     },
 };
 </script>
 
 <style lang="scss" scoped>
-.canvas-container-wrapper{
-    box-shadow: 0.4rem 0.4rem 2rem 0.5rem rgba($black,0.3);
+.canvas-container-wrapper {
+    box-shadow: 0.4rem 0.4rem 2rem 0.5rem rgba($black, 0.3);
 }
 </style>

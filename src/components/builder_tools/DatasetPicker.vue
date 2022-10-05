@@ -1,10 +1,5 @@
 <template>
     <div class="use-dataset-wrapper">
-        <v-btn class="close-btn" icon @click="$emit('closeSidepanel')">
-            <v-icon>
-                mdi-close
-            </v-icon>
-        </v-btn>
         <div class="select-dataset">
             <v-autocomplete v-model="selectedDatasetName" :items="datasetNames" dense clearable
                 @click:clear="resetData()" label="select Dataset" placeholder="dataset"></v-autocomplete>
@@ -32,6 +27,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import { eventBus } from '../../EventBus';
 export default {
     data() {
         return {
@@ -117,8 +113,8 @@ export default {
                 'type': "fromDataset",
                 'txt': `${this.selectedDatasetName}.${this.selectedHeader}`,
             }
-            this.$emit('addDataDrivenText', payload)
-
+            eventBus.$emit('addText',payload);
+            eventBus.$emit('openTextEditor');
         }
     }
 }
@@ -127,25 +123,11 @@ export default {
 
 <style lang="scss" scoped>
 .use-dataset-wrapper {
-    padding: 1rem;
-    width: 20vw;
+    width: 100%;
     height: 100vh;
-    border-right: 0.02rem solid $dark-one;
-    position: relative;
 }
 
 .select-dataset {
     margin-top: 3vh;
-}
-
-.close-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-
-    .v-icon {
-        font-size: 2rem;
-    }
-
 }
 </style>

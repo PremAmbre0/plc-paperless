@@ -1,18 +1,18 @@
 <template>
     <div class="builder-wrapper">
-        <component :is="selectedTool" @closeSidepanel="selectedTool=''" @addDataDrivenText="addText"></component>
+        <builder-tools></builder-tools>
         <div class="canvas-outer-wrapper">
             <div class="canvas-tools-wrapper">
                 <div class="canvas-tools-templatename">{{name}}</div>
                 <div class="canvas-tools">
                     <v-btn @click="addText({'type':'staticText','txt':'double tab to edit the text'})">Add Text
                     </v-btn>
-                    <v-btn @click="selectedTool='DatasetPicker'">Add Data Driven Text</v-btn>
+                    <v-btn @click="addDataDrivenText()">Add Data Driven Text</v-btn>
                     <v-btn @click="triggerFileInput() ">Add Image</v-btn>
                 </div>
             </div>
             <div class="canvas-wrapper">
-                <main-canvas v-if="isFetching" :templateData="templateData" :canvasWidth="canvasWidth" :canvasHeight="canvasHeight" @openTextEditor="openTextEditor" @openImageEditor="openImageEditor" @closeEditor="closeEditor"></main-canvas>
+                <main-canvas v-if="isFetching" :templateData="templateData" :canvasWidth="canvasWidth" :canvasHeight="canvasHeight"></main-canvas>
             </div>
             <div class="canvas-submit">
                 <v-btn class="canvas-submit-btn" @click="submitForProcessing">Submit For Processing</v-btn>
@@ -24,9 +24,7 @@
 </template>
 
 <script>
-import DatasetPicker from "../components/builder_tools/DatasetPicker.vue";
-import FontHandler from "../components/builder_tools/FontHandler.vue";
-import ImagePicker from "../components/builder_tools/ImagePicker.vue";
+import BuilderTools from "../components/builder_tools/BuilderTools.vue";
 import MainCanvas from "../components/MainCanvas.vue";
 import { eventBus } from "../EventBus";
 import { mapActions } from "vuex";
@@ -35,14 +33,14 @@ export default {
     data() {
         return {
             canvas: null,
-            selectedTool:"",
             templateData: null,
             name: "",
             isFetching: false,
         };
     },
     components: {
-        DatasetPicker, FontHandler, ImagePicker, MainCanvas
+        MainCanvas,
+        BuilderTools
     },
     beforeMount() {
         this.getTemplateData();
@@ -78,14 +76,8 @@ export default {
         addImage(e){
             eventBus.$emit('addImage',e);
         },
-        openTextEditor(){
-            this.selectedTool = "FontHandler";
-        },
-        openImageEditor(){
-            this.selectedTool = "ImagePicker";
-        },
-        closeEditor(){
-            this.selectedTool = "";
+        addDataDrivenText(){
+            eventBus.$emit("openDatasetPicker")
         }
     },
 };
