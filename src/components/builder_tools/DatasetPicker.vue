@@ -1,9 +1,9 @@
 <template>
     <div class="use-dataset-wrapper">
         <div class="select-dataset">
-            <v-autocomplete v-model="selectedDatasetName" :items="datasetNames" dense clearable
+            <v-autocomplete v-model="selectedDatasetName" :items="datasetNames" dense clearable  outlined flat
                 @click:clear="resetData()" label="select Dataset" placeholder="dataset"></v-autocomplete>
-            <v-select v-if="datasetHeaders.length > 0" v-model="selectedHeader" :items="datasetHeaders" outlined filled
+            <v-select v-if="datasetHeaders.length > 0" v-model="selectedHeader" :items="datasetHeaders" outlined
                 label="select Header" placeholder="header">
             </v-select>
             <v-btn v-if="dataOfSelectedHeader.length > 0" @click="addDataDrivenText() ; resetData()">add

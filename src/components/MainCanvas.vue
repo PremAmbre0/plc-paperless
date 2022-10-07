@@ -26,7 +26,7 @@ export default {
     computed: {
         currentFabricObject() {
             return this.canvas.activeCanvasObject
-        }
+        },
     },
     watch: {
         currentFabricObject(newValue) {

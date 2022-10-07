@@ -19,6 +19,7 @@ const initializeCanvas = {
             this.canvasObject.setWidth(newDimensions.width);
             this.canvasObject.renderAll();
         });
+        this.allFabricObjects  = this.canvasObject.getObjects();
         this.initialiseFabricListners();
     },
     initialiseFabricListners() {
@@ -33,11 +34,7 @@ const initializeCanvas = {
 
         });
         this.canvasObject.on("object:added", (e) => {
-            let canvasObjs = this.canvasObject.getObjects()
-            console.log(e.target)
-            let lastIndex = canvasObjs.length - 1
-            this.allFabricObjects.push(canvasObjs[lastIndex]);
-            this.activeCanvasObject = canvasObjs[lastIndex];
+            this.activeCanvasObject = e.target ;
         });
     }
 }

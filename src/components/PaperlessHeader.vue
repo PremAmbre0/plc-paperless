@@ -23,7 +23,7 @@
       </v-select>
 
       <v-spacer></v-spacer>
-      <v-text-field class="search-field">
+      <v-text-field outlined dense flat class="search-field">
         <v-btn icon slot="append">
           <v-icon>mdi-magnify</v-icon>
         </v-btn>

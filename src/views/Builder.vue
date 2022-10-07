@@ -9,13 +9,12 @@
                     </v-btn>
                     <v-btn @click="addDataDrivenText()">Add Data Driven Text</v-btn>
                     <v-btn @click="triggerFileInput() ">Add Image</v-btn>
+                    <v-btn disabled class="canvas-submit-btn" @click="submitForProcessing">Process Template</v-btn>
                 </div>
             </div>
             <div class="canvas-wrapper">
-                <main-canvas v-if="isFetching" :templateData="templateData" :canvasWidth="canvasWidth" :canvasHeight="canvasHeight"></main-canvas>
-            </div>
-            <div class="canvas-submit">
-                <v-btn class="canvas-submit-btn" @click="submitForProcessing">Submit For Processing</v-btn>
+                <main-canvas v-if="isFetching" :templateData="templateData" :canvasWidth="canvasWidth"
+                    :canvasHeight="canvasHeight"></main-canvas>
             </div>
         </div>
         <input ref="fileInput" type="file" @input="addImage" />
@@ -67,16 +66,16 @@ export default {
         triggerFileInput() {
             this.$refs.fileInput.click();
         },
-        addText(paylaod){
-            eventBus.$emit('addText',paylaod);
+        addText(paylaod) {
+            eventBus.$emit('addText', paylaod);
         },
-        submitForProcessing(){
+        submitForProcessing() {
             eventBus.$emit('submitForProcessing');
         },
-        addImage(e){
-            eventBus.$emit('addImage',e);
+        addImage(e) {
+            eventBus.$emit('addImage', e);
         },
-        addDataDrivenText(){
+        addDataDrivenText() {
             eventBus.$emit("openDatasetPicker")
         }
     },
@@ -134,15 +133,6 @@ export default {
     margin-top: 0;
 }
 
-.canvas-submit {
-    width: 80vw;
-    display: flex;
-    justify-content: flex-end;
-
-    &-btn {
-        margin-right: 5vw;
-    }
-}
 
 input[type="file"] {
     height: 0;
