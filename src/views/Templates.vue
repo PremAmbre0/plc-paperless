@@ -3,7 +3,7 @@
     <div class="template-container">
       <template-cards v-for="template in templatesList" :key="template.createdOn" :name="template.name"
         :imageUrl="template.imageUrl" :id="template._id" @click.native="setSelectedTemplate(template)"
-        @deleteTemp="deleteTemp" @openBuilder="openBuilder" />
+        @downloadImage="download" @deleteTemp="deleteTemp" @openBuilder="openBuilder" />
     </div>
     <dialog-form :existingFormData="selectedTemplate" @reloadData="getData"></dialog-form>
     <v-btn class="add-temp" fab dark color="indigo" @click="removeselectedTemplate()">
@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     ...mapActions("templates", ["getTemplatesList", "deleteTemplate"]),
+    ...mapActions(["downloadFile"]),
     ...mapMutations(["openDialogForm"]),
     getData() {
       this.getTemplatesList({
@@ -73,6 +74,9 @@ export default {
     openBuilder(id) {
       this.$router.push("/builder/" + id);
     },
+    download(name, url) {
+      this.downloadFile({ name, url });
+    }
   },
 };
 </script>
