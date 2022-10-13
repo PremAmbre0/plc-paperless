@@ -9,7 +9,7 @@
                     </v-btn>
                     <v-btn @click="addDataDrivenText()">Add Data Driven Text</v-btn>
                     <v-btn @click="triggerFileInput() ">Add Image</v-btn>
-                    <v-btn disabled class="canvas-submit-btn" @click="submitForProcessing">Process Template</v-btn>
+                    <v-btn class="canvas-submit-btn" @click="submitForProcessing">Process Template</v-btn>
                 </div>
             </div>
             <div class="canvas-wrapper">

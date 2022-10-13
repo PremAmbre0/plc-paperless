@@ -36,6 +36,10 @@ export default {
         })
         .catch((err) => {
           console.error("Err:", err);
+          commit("openSnackbar", {
+            text: "Something went wrong, refresh the page!",
+            type: "error",
+          }, { root: true });
           fail(err.toString() || "Failed to Load Templates List");
           return { totalCount: 0, fetchCount: 0, list: [] };
         });
@@ -72,10 +76,19 @@ export default {
         { root: true }
       )
         .then(() => {
+          commit("openSnackbar", {
+            text: "Templates added successfully",
+            type: "success",
+          },
+            { root: true });
           return null;
         })
         .catch((err) => {
           console.error("Err:", err);
+          commit("openSnackbar", {
+            text: "Failed to add templates, try again!",
+            type: "error",
+          }, { root: true });
           fail(err.toString() || "Failed to add Template");
           return new Error(err.message);
         });
@@ -92,6 +105,11 @@ export default {
         { root: true }
       )
         .then(() => {
+          commit("openSnackbar", {
+            text: "Templates Updated successfully",
+            type: "success",
+          },
+            { root: true });
           return null;
         })
         .catch((err) => {
@@ -112,10 +130,20 @@ export default {
         { root: true }
       )
         .then(() => {
+          commit("openSnackbar", {
+            text: "Templates deleted successfully",
+            type: "success",
+          },
+            { root: true });
           return null;
         })
         .catch((err) => {
           console.error("Err:", err);
+          commit("openSnackbar", {
+            text: "Failed to delete templates",
+            type: "error",
+          },
+            { root: true });
           fail(err.toString() || "Failed to Delete Template");
           return new Error(err.message);
         });

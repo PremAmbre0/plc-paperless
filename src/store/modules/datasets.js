@@ -35,6 +35,10 @@ export default {
           };
         })
         .catch((err) => {
+          commit("openSnackbar", {
+            text: "Something went wrong, refresh the page!",
+            type: "error",
+          }, { root: true });
           console.error("Err:", err);
           fail(err.toString() || "Failed to Load Datasets List");
           return { totalCount: 0, fetchCount: 0, list: [] };
@@ -57,10 +61,18 @@ export default {
         { root: true }
       )
         .then(() => {
+          commit("openSnackbar", {
+            text: "Dataset Uploaded Successfully",
+            type: "success",
+          }, { root: true });
           return null;
         })
         .catch((err) => {
           console.error("Err:", err);
+          commit("openSnackbar", {
+            text: "Failed to upload Dataset, try again!",
+            type: "error",
+          }, { root: true });
           fail(err.toString() || "Failed to upload dataset file");
           return new Error(err.message);
         });
@@ -77,10 +89,18 @@ export default {
         { root: true }
       )
         .then(() => {
+          commit("openSnackbar", {
+            text: "Dataset deleted successfully!",
+            type: "success",
+          }, { root: true });
           return null;
         })
         .catch((err) => {
           console.error("Err:", err);
+          commit("openSnackbar", {
+            text: "Failed to delete dataset",
+            type: "error",
+          }, { root: true });
           fail(err.toString() || "Failed to Delete Dataset");
           return new Error(err.message);
         });
@@ -104,6 +124,10 @@ export default {
         .catch((err) => {
           console.error("Err:", err);
           fail(err.toString() || "Failed to Load Datasets Data");
+          commit("openSnackbar", {
+            text: "Something went wrong , refresh the page!",
+            type: "error",
+          }, { root: true });
           return { ok: false, rows: [] };
         });
     },

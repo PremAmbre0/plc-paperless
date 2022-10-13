@@ -10,7 +10,7 @@ const initialState = () => ({
   loaderDialog: false,
   snackbarState: false,
   snackbarText: "",
-  snackbarTime: 2000,
+  snackbarTime: -1,
   currentState: {},
   messages: {
     loginFailed: "",
@@ -19,26 +19,29 @@ const initialState = () => ({
   uploadPercentage: 0,
   showDialogForm: false,
   showOverlayLoader: false,
+  snackbarColor: "",
 });
 
 let apiErrorFunction = ({ err, commit, reject }) => {
   console.log("[HTTP API Request Error]", err);
   if (err.message == "Network Error") {
-    commit("openSnackbar", { text: "Network Error" });
-    console.error("Network Error");
+    commit("openSnackbar", { text: "Network Error!", type: "error" });
+    console.error("Network Error!");
     commit("closeLoaderDialog");
   } else if (err.response && err.response.status == 401) {
     localStorage.clear();
     commit("resetState");
   } else if (err.response && err.response.status == 400) {
     commit("openSnackbar", {
-      text: err.response.data.message || "Request Failed, please try again",
+      text: err.response.data.message || "Request Failed, please try again!"
+      , type: "error"
     });
   } else if (err.response && err.response.status == 500) {
-    console.error("Internal SERVER ERROR");
+    console.error("Internal SERVER ERROR!");
   } else {
     commit("openSnackbar", {
-      text: "Request Failed, please try again",
+      text: "Request Failed, please try again!"
+      , type: "error"
     });
   }
   let errMsg = "";
@@ -67,10 +70,21 @@ export default new Vuex.Store({
     closeLoaderDialog(state) {
       state.loaderDialog = false;
     },
-    openSnackbar(state, { text = "", time = 5000 } = {}) {
+    openSnackbar(state, { text = "", time = 3000, type = "" } = {}) {
       state.snackbarTime = time;
       state.snackbarText = text;
       state.snackbarState = true;
+      switch (type) {
+        case "error":
+          state.snackbarColor = "#BF2600";
+          break;
+        case "success":
+          state.snackbarColor = "#00875A";
+          break;
+        case "":
+          state.snackbarColor = "#5243AA";
+          break;
+      }
     },
     closeSnackbar(state) {
       state.snackbarState = false;
@@ -265,6 +279,7 @@ export default new Vuex.Store({
     snackbarState: (state) => state.snackbarState,
     snackbarText: (state) => state.snackbarText,
     snackbarTime: (state) => state.snackbarTime,
+    snackbarColor: (state) => state.snackbarColor,
     uploadPercentage: (state) => state.uploadPercentage,
     currentState: (state) => state.currentState,
     showDialogForm: (state) => state.showDialogForm,

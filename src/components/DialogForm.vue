@@ -268,7 +268,7 @@ export default {
         window.alert("Error: \n Template name cannot be empty");
         return false;
       }
-      if (!file) {
+      if (!file && this.existingFormData.mode == "new") {
         window.alert("Error: \n Can't procceed without an image file");
         return false;
       } else {

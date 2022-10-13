@@ -31,10 +31,18 @@ export default {
                 { root: true }
             )
                 .then((data) => {
+                    commit("openSnackbar", {
+                        text: "Job Submitted Successfully!",
+                        type: "success",
+                      }, { root: true });
                     return data;
                 })
                 .catch((err) => {
                     console.error("Err:", err);
+                    commit("openSnackbar", {
+                        text: "Failed to submit Job, try again!",
+                        type: "error",
+                      }, { root: true });
                     fail(err.toString() || "Failed to start Job");
                     return {
                         ok: false,
