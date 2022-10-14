@@ -4,6 +4,7 @@ import axios from "axios";
 import templates from "./modules/templates.js";
 import datasets from "./modules/datasets.js";
 import builder from "./modules/builder.js";
+import jobs from "./modules/jobs.js";
 
 Vue.use(Vuex);
 const initialState = () => ({
@@ -289,5 +290,6 @@ export default new Vuex.Store({
     templates,
     datasets,
     builder,
+    jobs
   },
 });
